@@ -14,5 +14,4 @@ public class DataStore {
     public int getNumberOfRespondents(){
         return dataBase.getNumberOfRespondents();
     }
-
 }
