@@ -74,6 +74,8 @@ public class DataBase {
         stmnt.executeUpdate(createtablesql);
         createtablesql = DataBaseConstant.getCreateThemeTableQuarry(DataBaseConstant.THEME_TABLE);
         stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
+        stmnt.executeUpdate(createtablesql);
         stmnt.close();
         System.out.println("Tables created successfully");
     }
@@ -262,6 +264,24 @@ public class DataBase {
 
     public float[][] getAvarages(){
         return avarages;
+    }
+
+    /**
+     * @author Thilina
+     *
+     * This so the calculation on data and map themes and store them nessr
+     *
+     *
+     * */
+    public void sortTable(){
+        try {
+            ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
+            //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
+            //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //other generic DB methods
