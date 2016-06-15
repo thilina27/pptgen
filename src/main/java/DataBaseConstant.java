@@ -41,6 +41,11 @@ public class DataBaseConstant {
     public static final String ABS_COLUMN = "DIFF";
     public static final String PRES_COLUMN = "PRESCOLOUMN";
 
+    //AOI table
+    public static final String AOI_TABLE = "AOITABLE";
+
+    //AOS table
+    public static final String AOS_TABLE = "AOSTABLE";
     //sor table quarry
     public static final String GET_JOIN_QUARRY = "SELECT s."+ ID_COLUMN +", s."+ STATEMENT_COLUMN +", s."+COMPANY_COLUMN
             + " , s."+BENCHMARK_COLUMN+", c."+COC_OR_COLUMN+", c."+STDEV_COLUMN+", t."+ THEME_COLOUMN
@@ -107,6 +112,17 @@ public class DataBaseConstant {
         return CREATE_STATEMENT_TABLE_QUARRY;
     }
 
+    public static String getCreateAOSortQuarry(String tableName){
+
+        String CREATE_STATEMENT_TABLE_QUARRY = "CREATE TABLE "+tableName+" " +
+                "("+ ID_COLUMN +"            INT     PRIMARY KEY    NOT NULL," +
+                " "+ STATEMENT_COLUMN +"     TEXT    NOT NULL, " +
+                " "+ COC_OR_COLUMN +"       REAL    NOT NULL, " +
+                " "+ THEME_COLOUMN +"        TEXT    NOT NULL) ";
+
+        return CREATE_STATEMENT_TABLE_QUARRY;
+    }
+
     public static String getPreparedInsetCOCTable(){
 
         String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ COC_TABLE +
@@ -139,4 +155,16 @@ public class DataBaseConstant {
 
         return PREPARED_STATEMENT;
     }
+
+    public static String getPreparedInsetAOTable(String table){
+
+        String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ table +
+                "("+ ID_COLUMN +","+ STATEMENT_COLUMN +
+                ","+ COC_OR_COLUMN +","+ THEME_COLOUMN +")";
+
+        String PREPARED_STATEMENT  = INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?)";
+
+        return PREPARED_STATEMENT;
+    }
+
 }
