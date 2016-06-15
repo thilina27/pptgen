@@ -151,6 +151,53 @@ public class DataBase {
 
     }
 
+    /**
+     * @author Thilina
+     *
+     * insert calculated data into sort table
+     *
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
+    public void insertIntoSortTable(int id, String statement, float cocor, float stdev, float abs,
+                                    float pres, String theme)
+            throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setFloat(3,cocor);
+            prestatement.setFloat(4,stdev);
+            prestatement.setFloat(5,abs);
+            prestatement.setFloat(6,pres);
+            prestatement.setString(7,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Sort update");
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
+    /**
+     * @author Thilina
+     *
+     * insert data into coc or table wich holds cocor values and stdev values for each statement
+     *
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
     public void insertIntoThemeTable(String statement, String theme) throws DataBaseException {
 
         try {
@@ -278,6 +325,18 @@ public class DataBase {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
             //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
             //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
+                String statement = resultSet.getString(DataBaseConstant.STATEMENT_COLUMN);
+                float company = resultSet.getFloat(DataBaseConstant.COMPANY_COLUMN);
+                float bench = resultSet.getFloat(DataBaseConstant.COMPANY_COLUMN);
+                float cocor = resultSet.getFloat(DataBaseConstant.COC_OR_COLUMN);
+                float stdev = resultSet.getFloat(DataBaseConstant.STDEV_COLUMN);
+                String theme = resultSet.getString(DataBaseConstant.THEME_COLOUMN);
+                float present = ((company - bench)/bench)*100;
+
+
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

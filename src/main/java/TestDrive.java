@@ -10,6 +10,7 @@ public class TestDrive {
         ReadFile.readStatements("excl\\test2.xlsx","KBSL Information Technologies Ltd","Worksheet");
         ReadFile.readCOCOR("excl\\cocrep.xlsx", "Worksheet");
         ReadFile.readThemes("excl\\test2.xlsx","Std Themes");
+        ReadFile.createSortData();
         ReadFile.closeall();
 
         long endTime   = System.currentTimeMillis();

@@ -257,6 +257,10 @@ public class ReadFile {
         }
     }
 
+    public static void createSortData(){
+        database.sortTable();
+    }
+
     public static void closeall(){
         //todo remove this and do it correctly
         database.closeConnection(); //for testing

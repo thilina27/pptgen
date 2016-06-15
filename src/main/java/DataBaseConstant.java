@@ -38,14 +38,15 @@ public class DataBaseConstant {
 
     //sort table
     public static final String SORT_TABLE = "SORTTABLE";
-    public static final String DIFF_COLUMN = "DIFF";
+    public static final String ABS_COLUMN = "DIFF";
     public static final String PRES_COLUMN = "PRESCOLOUMN";
 
     //sor table quarry
-    public static final String GET_JOIN_QUARRY = "SELECT s."+ ID_COLUMN +" s."+ STATEMENT_COLUMN +", s."+COMPANY_COLUMN
-            + " , s."+BENCHMARK_COLUMN+", c."+COC_OR_COLUMN+",c."+STDEV_COLUMN+", t."+ THEME_COLOUMN
+    public static final String GET_JOIN_QUARRY = "SELECT s."+ ID_COLUMN +", s."+ STATEMENT_COLUMN +", s."+COMPANY_COLUMN
+            + " , s."+BENCHMARK_COLUMN+", c."+COC_OR_COLUMN+", c."+STDEV_COLUMN+", t."+ THEME_COLOUMN
             + " FROM  "+TABLE_STATEMENT+" s, "+ COC_TABLE +" c , "+THEME_TABLE+" t"
-            + " WHERE c."+STATEMENT_COLUMN+" = s."+STDEV_COLUMN+" and t."+STDEV_COLUMN+" = c."+STDEV_COLUMN+" ";
+            + " WHERE c."+STATEMENT_COLUMN+" = s."+STATEMENT_COLUMN+" and t."+STATEMENT_COLUMN+" = c."+STATEMENT_COLUMN
+            + " ";
 
     //get insert in to bale quarry for a given table
     public static String getPreparedInsertStatement(String tableName){
@@ -99,7 +100,7 @@ public class DataBaseConstant {
                 " "+ STATEMENT_COLUMN +"    TEXT    NOT NULL, " +
                 " "+ COC_OR_COLUMN +"       REAL    NOT NULL, " +
                 " "+ STDEV_COLUMN +"        REAL    NOT NULL, " +
-                " "+ DIFF_COLUMN + "        REAL    NOT NULL, " +
+                " "+ ABS_COLUMN + "        REAL    NOT NULL, " +
                 " "+ PRES_COLUMN + "        REAL    NOT NULL, " +
                 " "+ THEME_COLOUMN +"       TEXT    NOT NULL) ";
 
@@ -132,9 +133,9 @@ public class DataBaseConstant {
 
         String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ SORT_TABLE +
                 "("+ ID_COLUMN +","+ STATEMENT_COLUMN +
-                ","+ COC_OR_COLUMN +","+ STDEV_COLUMN +","+ DIFF_COLUMN + ","+ THEME_COLOUMN +")";
+                ","+ COC_OR_COLUMN +","+ STDEV_COLUMN +","+ ABS_COLUMN +","+PRES_COLUMN +","+ THEME_COLOUMN +")";
 
-        String PREPARED_STATEMENT  = INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?,?,?)";
+        String PREPARED_STATEMENT  = INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?,?,?,?)";
 
         return PREPARED_STATEMENT;
     }
