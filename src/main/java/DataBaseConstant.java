@@ -32,7 +32,7 @@ public class DataBaseConstant {
 
     //theme table
     public static final String THEME_TABLE = "THEMETABLE";
-    public static final String THEME_COLOUMN = "Theme";
+    public static final String THEME_COLOUMN = "THEME";
 
     //get insert in to bale quarry for a given table
     public static String getPreparedInsertStatement(String tableName){
