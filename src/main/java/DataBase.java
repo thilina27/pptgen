@@ -76,6 +76,10 @@ public class DataBase {
         stmnt.executeUpdate(createtablesql);
         createtablesql = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
         stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOI_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOS_TABLE);
+        stmnt.executeUpdate(createtablesql);
         stmnt.close();
         System.out.println("Tables created successfully");
     }
@@ -168,7 +172,7 @@ public class DataBase {
 
         try {
             con.setAutoCommit(false);
-            String quarry = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
+            String quarry = DataBaseConstant.getPreparedInsetSortTable();
             PreparedStatement prestatement= con.prepareStatement(quarry);
             prestatement.setInt(1,id);
             prestatement.setString(2,statement);
@@ -217,6 +221,8 @@ public class DataBase {
             throw new DataBaseException(e);
         }
     }
+
+
 
     /**
      * @author Thilina
@@ -329,20 +335,49 @@ public class DataBase {
                 int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
                 String statement = resultSet.getString(DataBaseConstant.STATEMENT_COLUMN);
                 float company = resultSet.getFloat(DataBaseConstant.COMPANY_COLUMN);
-                float bench = resultSet.getFloat(DataBaseConstant.COMPANY_COLUMN);
+                float bench = resultSet.getFloat(DataBaseConstant.BENCHMARK_COLUMN);
                 float cocor = resultSet.getFloat(DataBaseConstant.COC_OR_COLUMN);
                 float stdev = resultSet.getFloat(DataBaseConstant.STDEV_COLUMN);
                 String theme = resultSet.getString(DataBaseConstant.THEME_COLOUMN);
                 float present = ((company - bench)/bench)*100;
 
-
+                this.insertIntoSortTable(id,statement,cocor,stdev,company,present,theme);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (DataBaseException e) {
+            e.printStackTrace();
         }
     }
 
+    private void insertAO(String table, int id, String statement, float coc, String theme) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getPreparedInsetAOTable(table);
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setFloat(3,coc);
+            prestatement.setString(4,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to " + table);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
+    public void insertAOI(int id, String statement, float coc, String theme) throws DataBaseException {
+        this.insertAO(DataBaseConstant.AOI_TABLE,id,statement,coc,theme);
+    }
+
+    public void insertAOS(int id, String statement, float coc, String theme) throws DataBaseException {
+        this.insertAO(DataBaseConstant.AOS_TABLE,id,statement,coc,theme);
+    }
     //other generic DB methods
 
     /**
