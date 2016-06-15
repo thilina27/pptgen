@@ -114,6 +114,7 @@ public class ReadFile {
                             float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                             float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
                             database.insertOtherStatement(state,cVal,bVal);
+                            database.insertCoreStatement(state,cVal,bVal);
                         }
                         else{
                             otherStatement = false;
@@ -128,6 +129,7 @@ public class ReadFile {
                             float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                             float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
                             database.insertGPTWStatement(state,cVal,bVal);
+                            database.insertCoreStatement(state,cVal,bVal);
                         }
                         else{
                             gptw = false;

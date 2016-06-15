@@ -1,3 +1,5 @@
+
+
 /**
  * Created by Thilina on 6/8/2016.
  */
@@ -32,7 +34,18 @@ public class DataBaseConstant {
 
     //theme table
     public static final String THEME_TABLE = "THEMETABLE";
-    public static final String THEME_COLOUMN = "Theme";
+    public static final String THEME_COLOUMN = "THEME";
+
+    //sort table
+    public static final String SORT_TABLE = "SORTTABLE";
+    public static final String DIFF_COLUMN = "DIFF";
+    public static final String PRES_COLUMN = "PRESCOLOUMN";
+
+    //sor table quarry
+    public static final String GET_JOIN_QUARRY = "SELECT s."+ ID_COLUMN +" s."+ STATEMENT_COLUMN +", s."+COMPANY_COLUMN
+            + " , s."+BENCHMARK_COLUMN+", c."+COC_OR_COLUMN+",c."+STDEV_COLUMN+", t."+ THEME_COLOUMN
+            + " FROM  "+TABLE_STATEMENT+" s, "+ COC_TABLE +" c , "+THEME_TABLE+" t"
+            + " WHERE c."+STATEMENT_COLUMN+" = s."+STDEV_COLUMN+" and t."+STDEV_COLUMN+" = c."+STDEV_COLUMN+" ";
 
     //get insert in to bale quarry for a given table
     public static String getPreparedInsertStatement(String tableName){
@@ -74,6 +87,20 @@ public class DataBaseConstant {
         String CREATE_STATEMENT_TABLE_QUARRY = "CREATE TABLE "+tableName+" " +
                 "("+ ID_COLUMN +"            INT     PRIMARY KEY    NOT NULL," +
                 " "+ STATEMENT_COLUMN +"     TEXT    NOT NULL, " +
+                " "+ THEME_COLOUMN +"        TEXT    NOT NULL) ";
+
+        return CREATE_STATEMENT_TABLE_QUARRY;
+    }
+
+    public static String getCreateSortTableQuarry(String tableName){
+
+        String CREATE_STATEMENT_TABLE_QUARRY = "CREATE TABLE "+tableName+" " +
+                "("+ ID_COLUMN +"           INT     PRIMARY KEY    NOT NULL," +
+                " "+ STATEMENT_COLUMN +"    TEXT    NOT NULL, " +
+                " "+ COC_OR_COLUMN +"       REAL    NOT NULL, " +
+                " "+ STDEV_COLUMN +"        REAL    NOT NULL, " +
+                " "+ DIFF_COLUMN + "        REAL    NOT NULL, " +
+                " "+ PRES_COLUMN + "        REAL    NOT NULL, " +
                 " "+ THEME_COLOUMN +"       TEXT    NOT NULL) ";
 
         return CREATE_STATEMENT_TABLE_QUARRY;
@@ -101,4 +128,14 @@ public class DataBaseConstant {
         return PREPARED_STATEMENT;
     }
 
+    public static String getPreparedInsetSortTable(){
+
+        String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ SORT_TABLE +
+                "("+ ID_COLUMN +","+ STATEMENT_COLUMN +
+                ","+ COC_OR_COLUMN +","+ STDEV_COLUMN +","+ DIFF_COLUMN + ","+ THEME_COLOUMN +")";
+
+        String PREPARED_STATEMENT  = INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?,?,?)";
+
+        return PREPARED_STATEMENT;
+    }
 }
