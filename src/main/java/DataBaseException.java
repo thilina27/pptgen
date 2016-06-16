@@ -15,6 +15,12 @@ class DataBaseException extends Exception{
         e.printStackTrace();
     }
 
+    DataBaseException(String e){
+
+        exceptionmsg = e;
+
+    }
+
     public String toString(){
         return exceptionmsg;
     }

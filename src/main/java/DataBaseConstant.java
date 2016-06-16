@@ -114,7 +114,6 @@ class DataBaseConstant {
 
         return "CREATE TABLE "+tableName+" " +
                 "("+ ID_COLUMN +"            INT     PRIMARY KEY    NOT NULL," +
-                " "+ STATEMENT_COLUMN +"     TEXT    NOT NULL, " +
                 " "+ THEME_COLOUMN +"        TEXT    NOT NULL) ";
     }
 
@@ -174,13 +173,13 @@ class DataBaseConstant {
         return INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?)";
     }
 
-    static String getPreparedInsetAOTable1(String table){
+    static String getPreparedInsetAOTable(String table){
 
         String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ table +
-                "("+ ID_COLUMN +","+ STATEMENT_COLUMN +
+                "("+ ID_COLUMN +
                 ","+ THEME_COLOUMN +")";
 
-        return INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?)";
+        return INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?)";
     }
 
     static String getPreparedInsertDemography(){
