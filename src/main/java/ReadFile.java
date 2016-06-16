@@ -21,6 +21,8 @@ class ReadFile {
     private static boolean gptw = false;
     private static int grandMeanColoumn;
     private static int grandMeanRow;
+    public static  int start_demo_colum;
+
 
     static void init(){
 
@@ -62,6 +64,7 @@ class ReadFile {
                     }
                     numberOfCols++;
                 }
+                start_demo_colum = numberOfCols +3;
             } // end find location
 
             //read number of respondents
@@ -253,6 +256,45 @@ class ReadFile {
             e.printStackTrace();
         } catch (DataBaseException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void readDemoFactors(String filename, String sheetName)
+    {
+
+        try {
+
+            workBook = new XSSFWorkbook(new FileInputStream(filename));
+
+            sheet = workBook.getSheet(sheetName);
+
+            // find the relavent location to start get data
+            String demo_name= "";
+            String demo_critaria="";
+            String  demo_score="";
+            Row demo_name_row = sheet.getRow(0);
+            Row demo_criteria_row = sheet.getRow(1);
+            Row demo_score_row = sheet.getRow(grandMeanRow);
+
+            for(int col=start_demo_colum;true;col++)
+            {
+                if(!(demo_name_row.getCell(col)==null) && !demo_name_row.getCell(col).toString().equalsIgnoreCase(""))
+                {
+                    demo_name = demo_name_row.getCell(col).toString();
+                }
+                demo_critaria = demo_criteria_row.getCell(col).toString();
+                demo_score = demo_score_row.getCell(col).toString();
+                System.out.println(""+demo_name+"\t"+demo_critaria+"\t"+demo_score);
+                if((demo_name_row.getCell(col+1)==null || demo_name_row.getCell(col+1).toString().equalsIgnoreCase("")) && (demo_criteria_row.getCell(col+1)==null|| demo_criteria_row.getCell(col+1).toString().equalsIgnoreCase("")))
+                {
+                    break;
+                }
+            }
+            workBook.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //todo handle or throw
         }
     }
 
