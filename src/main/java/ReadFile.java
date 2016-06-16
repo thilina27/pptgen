@@ -266,4 +266,8 @@ class ReadFile {
 
     }
 
+    static DataBase getDataBase(){
+        return database;
+    }
+
 }

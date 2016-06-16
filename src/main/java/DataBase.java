@@ -90,6 +90,8 @@ class DataBase {
         stmnt.executeUpdate(createtablesql);
         createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.AOS_TABLE);
         stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.DEMOGRAPHY_TABLE);
+        stmnt.executeUpdate(createtablesql);
         stmnt.close();
         System.out.println("Tables created successfully");
     }
@@ -342,7 +344,7 @@ class DataBase {
                 float cocor = resultSet.getFloat(DataBaseConstant.COC_OR_COLUMN);
                 float stdev = resultSet.getFloat(DataBaseConstant.STDEV_COLUMN);
                 String theme = resultSet.getString(DataBaseConstant.THEME_COLOUMN);
-                float present = ((company - bench)/bench)*100;
+                float present = ((company - bench)/company)*100;
 
                 this.insertIntoSortTable(id,statement,cocor,stdev,company,present,theme);
             }
@@ -438,6 +440,40 @@ class DataBase {
     public void insertAOS(int id, String statement, String theme) throws DataBaseException {
         this.insertIntoAOTable(DataBaseConstant.AOS_TABLE,id,statement,theme);
     }
+
+    //demography
+    /**
+     *
+     * @author Thilina
+     *
+     * Provide method to insert value in to demography table
+     *
+     * @param id id
+     * @param demography demography
+     * @param factor factors of the demography
+     * @param mean geand mean value for demography factor
+     *
+     * */
+    void insertDemography(int id, String demography, String factor, float mean) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getPreparedInsertDemography();
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,demography);
+            prestatement.setString(3,factor);
+            prestatement.setFloat(4,mean);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to " + DataBaseConstant.DEMOGRAPHY_TABLE);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
     //other generic DB methods
 
     /**

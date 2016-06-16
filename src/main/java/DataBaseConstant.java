@@ -48,7 +48,14 @@ class DataBaseConstant {
     static final String AOS_TEMP_TABLE = "AOSTEMPTABLE";
     static final String AOS_TABLE = "AOSTABLE";
 
-    //sor table quarry
+    //Demography table
+    static final String DEMOGRAPHY_TABLE = "DEMOGRAPHYTABLE";
+    static final String DEMOGRAPHY_COLUMN = "DEMOGRAPHY";
+    static final String FACTOR_COLUMN = "FACTORS";
+    static final String MEAN_COLUMN = "MEAN";
+
+
+    //sort table quarry
     static final String GET_JOIN_QUARRY = "SELECT s."+ ID_COLUMN +", s."+ STATEMENT_COLUMN +", s."+COMPANY_COLUMN
             + " , s."+BENCHMARK_COLUMN+", c."+COC_OR_COLUMN+", c."+STDEV_COLUMN+", t."+ THEME_COLOUMN
             + " FROM  "+TABLE_STATEMENT+" s, "+ COC_TABLE +" c , "+THEME_TABLE+" t"
@@ -111,7 +118,16 @@ class DataBaseConstant {
                 " "+ THEME_COLOUMN +"        TEXT    NOT NULL) ";
     }
 
-    //get insert in to bale quarry for a given table
+    static String getCreateDemographyTableQuarry(String tableName){
+
+        return "CREATE TABLE "+tableName+" " +
+                "("+ ID_COLUMN +"            INT       NOT NULL," +
+                " "+ DEMOGRAPHY_COLUMN +"     TEXT    NOT NULL, " +
+                " "+ FACTOR_COLUMN +"       TEXT    NOT NULL, " +
+                " "+ MEAN_COLUMN +"     REAL    NOT NULL) ";
+    }
+
+    //get insert in to table quarry for a given table
     static String getPreparedInsertStatement(String tableName){
 
         String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ tableName +
@@ -167,4 +183,13 @@ class DataBaseConstant {
         return INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?)";
     }
 
+    static String getPreparedInsertDemography(){
+
+        String INSERT_STATEMENT_TABLE_QUARRY = "INSERT INTO "+ DEMOGRAPHY_TABLE +
+                "("+ ID_COLUMN +","+ DEMOGRAPHY_COLUMN +
+                ","+ FACTOR_COLUMN +","+ MEAN_COLUMN +")";
+
+        return INSERT_STATEMENT_TABLE_QUARRY + "VALUES (?,?,?,?)";
+
+    }
 }
