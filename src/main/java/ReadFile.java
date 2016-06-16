@@ -21,7 +21,7 @@ class ReadFile {
     private static boolean gptw = false;
     private static int grandMeanColoumn;
     private static int grandMeanRow;
-    public static  int start_demo_colum;
+    private static  int start_demo_column;
 
 
     static void init(){
@@ -64,8 +64,10 @@ class ReadFile {
                     }
                     numberOfCols++;
                 }
-                start_demo_colum = numberOfCols +3;
+
             } // end find location
+
+            start_demo_column = numberOfCols +3;
 
             //read number of respondents
             Row row1 = sheet.getRow(numberOfRows);
@@ -259,7 +261,16 @@ class ReadFile {
         }
     }
 
-    public static void readDemoFactors(String filename, String sheetName)
+    /**
+     *
+     * @author Niroshan
+     *
+     * Read demography details from worksheet
+     *
+     * @param filename file name
+     * @param sheetName  sheet name of the file
+     * */
+    static void readDemoFactors(String filename, String sheetName)
     {
 
         try {
@@ -269,25 +280,33 @@ class ReadFile {
             sheet = workBook.getSheet(sheetName);
 
             // find the relavent location to start get data
-            String demo_name= "";
-            String demo_critaria="";
-            String  demo_score="";
-            Row demo_name_row = sheet.getRow(0);
-            Row demo_criteria_row = sheet.getRow(1);
-            Row demo_score_row = sheet.getRow(grandMeanRow);
+            String demoName = "";
+            String demoCritaria;
+            String demoScore;
+            float demoValue;
+            Row demoNameRow = sheet.getRow(0);
+            Row demoCriteriaRow = sheet.getRow(1);
+            Row demoScoreRow = sheet.getRow(grandMeanRow);
+            boolean isFinish = false;
+            int id = 0;
 
-            for(int col=start_demo_colum;true;col++)
+            for(int col = start_demo_column; !isFinish; col++)
             {
-                if(!(demo_name_row.getCell(col)==null) && !demo_name_row.getCell(col).toString().equalsIgnoreCase(""))
+                if(!(demoNameRow.getCell(col)==null) && !demoNameRow.getCell(col).toString().equalsIgnoreCase(""))
                 {
-                    demo_name = demo_name_row.getCell(col).toString();
+                    demoName = demoNameRow.getCell(col).toString();
                 }
-                demo_critaria = demo_criteria_row.getCell(col).toString();
-                demo_score = demo_score_row.getCell(col).toString();
-                System.out.println(""+demo_name+"\t"+demo_critaria+"\t"+demo_score);
-                if((demo_name_row.getCell(col+1)==null || demo_name_row.getCell(col+1).toString().equalsIgnoreCase("")) && (demo_criteria_row.getCell(col+1)==null|| demo_criteria_row.getCell(col+1).toString().equalsIgnoreCase("")))
+                demoCritaria = demoCriteriaRow.getCell(col).toString();
+                demoScore = demoScoreRow.getCell(col).toString();
+                if(!demoScore.equalsIgnoreCase("-")){
+                    demoValue = Float.parseFloat(demoScore);
+                    database.insertDemography(id++, demoName, demoCritaria, demoValue);
+                }
+                if((demoNameRow.getCell(col+1)==null || demoNameRow.getCell(col+1).toString().equalsIgnoreCase(""))
+                        && (demoCriteriaRow.getCell(col+1)==null
+                        || demoCriteriaRow.getCell(col+1).toString().equalsIgnoreCase("")))
                 {
-                    break;
+                    isFinish = true;
                 }
             }
             workBook.close();
@@ -295,6 +314,8 @@ class ReadFile {
         } catch (IOException e) {
             e.printStackTrace();
             //todo handle or throw
+        } catch (DataBaseException e) {
+            e.printStackTrace();
         }
     }
 
