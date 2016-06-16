@@ -1,12 +1,14 @@
 /**
  * Created by Instructor - ICT on 6/8/2016.
+ *
+ * Exception class for the database handle
  */
-public class DataBaseException extends Exception{
+class DataBaseException extends Exception{
 
     private String exceptionmsg;
     private Exception newex;
 
-    public DataBaseException(Exception e){
+    DataBaseException(Exception e){
 
         exceptionmsg = e.getMessage();
         newex = e;

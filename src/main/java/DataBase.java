@@ -1,16 +1,22 @@
 import java.io.File;
 import java.sql.*;
 
+
 /**
  * Created by Thilina on 6/8/2016.
+ *
+ * This class store all data bse connections and table details.
+ * This also handle the creation of table and insertion.
+ * Keep all data read from excel file in tables and arrays and provide package local methods to the
+ * DataStore to provide data to the other packages.
+ *
  */
-public class DataBase {
+class DataBase {
 
     private Connection con;
     private Statement stmnt;
     private int statementId = 0;
     private float avarages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
-    private float gradmean[] = new float[2];
     private int numberOfRespondents;
     private int cocID = 0;
     private int themeID = 0;
@@ -24,7 +30,7 @@ public class DataBase {
      *
      * @throws DataBaseException
      * */
-    public DataBase() throws DataBaseException {
+    DataBase() throws DataBaseException {
 
         try {
             this.createDB();
@@ -136,7 +142,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insetIntoCOCTable(String statement, float coc, float stdev) throws DataBaseException {
+    void insetIntoCOCTable(String statement, float coc, float stdev) throws DataBaseException {
 
         try {
             con.setAutoCommit(false);
@@ -170,8 +176,8 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertIntoSortTable(int id, String statement, float cocor, float stdev, float abs,
-                                    float pres, String theme)
+    private void insertIntoSortTable(int id, String statement, float cocor, float stdev, float abs,
+                                     float pres, String theme)
             throws DataBaseException {
 
         try {
@@ -206,7 +212,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertIntoThemeTable(String statement, String theme) throws DataBaseException {
+    void insertIntoThemeTable(String statement, String theme) throws DataBaseException {
 
         try {
             con.setAutoCommit(false);
@@ -240,7 +246,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertCoreStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertCoreStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.TABLE_STATEMENT,statement,company,bench);
     }
 
@@ -256,7 +262,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertOtherStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertOtherStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.OTHER_STATEMENTS_TABLE,statement,company,bench);
     }
 
@@ -272,7 +278,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertGPTWStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertGPTWStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.GPTW_STATEMENTS,statement,company,bench);
     }
 
@@ -285,21 +291,17 @@ public class DataBase {
      * @param benchAverage average value of the bench mark
      * @param numberOfAverages index of average array
      * */
-    public void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
+    void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
 
         avarages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
         avarages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
 
     }
 
-    public void setNumberOfRespondents(int val){
+    void setNumberOfRespondents(int val){
         numberOfRespondents = val;
     }
 
-    //get methods
-    public int getNumberOfRespondents(){
-        return numberOfRespondents;
-    }
 
     /**
      * @author Thilina
@@ -310,17 +312,13 @@ public class DataBase {
      *
      * @throws SQLException
      * */
-    public ResultSet runQuarry(String quarry) throws SQLException {
+     ResultSet runQuarry(String quarry) throws SQLException {
 
         con.setAutoCommit(false);
         stmnt = con.createStatement();
         ResultSet rs = stmnt.executeQuery(quarry);
 
         return rs;
-    }
-
-    public float[][] getAvarages(){
-        return avarages;
     }
 
     //aoi and aos section
@@ -331,7 +329,7 @@ public class DataBase {
      *
      *
      * */
-    public void sortTable(){
+     void sortTable(){
         try {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
             //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
@@ -448,7 +446,7 @@ public class DataBase {
      * This will close connection to the Data base
      *
      * */
-    public boolean closeConnection(){
+    boolean closeConnection(){
 
         boolean closed = false;
 
@@ -493,6 +491,28 @@ public class DataBase {
         }
 
         return isDelete;
+    }
+
+    //methods for data store
+    //get methods
+
+    int getNumberOfRespondents(){
+        return numberOfRespondents;
+    }
+    float getCompanyAvarageOfSectoin(int section){
+        return avarages[section][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    }
+
+    float getBenchMarkAvarageOfSectoin(int section){
+        return avarages[section][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+    }
+
+    float getCompnayGrandMean(){
+        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    }
+
+    float getBenchMarkGrandMean(){
+        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
     }
 
 }
