@@ -76,9 +76,13 @@ public class DataBase {
         stmnt.executeUpdate(createtablesql);
         createtablesql = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
         stmnt.executeUpdate(createtablesql);
-        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOI_TABLE);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOI_TEMP_TABLE);
         stmnt.executeUpdate(createtablesql);
-        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOS_TABLE);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOS_TEMP_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.AOI_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.AOS_TABLE);
         stmnt.executeUpdate(createtablesql);
         stmnt.close();
         System.out.println("Tables created successfully");
@@ -194,7 +198,7 @@ public class DataBase {
     /**
      * @author Thilina
      *
-     * insert data into coc or table wich holds cocor values and stdev values for each statement
+     * insert data into theme table wich map the theme and the sattement
      *
      * @param statement statement
      * @param theme theme for statement
@@ -319,6 +323,7 @@ public class DataBase {
         return avarages;
     }
 
+    //aoi and aos section
     /**
      * @author Thilina
      *
@@ -351,11 +356,24 @@ public class DataBase {
         }
     }
 
-    private void insertAO(String table, int id, String statement, float coc, String theme) throws DataBaseException {
+    /**
+     * @author Thilina
+     *
+     * inser into AOS and AOI temp tables to sort and extract top 5 and botom 5 themes
+     *
+     * @param table Name of the table AOI or AOS
+     * @param id id
+     * @param statement statement
+     * @param coc coc value of the statement
+     * @param theme theme of the statement
+     *
+     * @throws DataBaseException
+     * */
+    private void insertAOSort(String table, int id, String statement, float coc, String theme) throws DataBaseException {
 
         try {
             con.setAutoCommit(false);
-            String quarry = DataBaseConstant.getPreparedInsetAOTable(table);
+            String quarry = DataBaseConstant.getPreparedInsetAOSortTable(table);
             PreparedStatement prestatement= con.prepareStatement(quarry);
             prestatement.setInt(1,id);
             prestatement.setString(2,statement);
@@ -371,12 +389,56 @@ public class DataBase {
         }
     }
 
-    public void insertAOI(int id, String statement, float coc, String theme) throws DataBaseException {
-        this.insertAO(DataBaseConstant.AOI_TABLE,id,statement,coc,theme);
+    /**
+     * @author Thilina
+     *
+     * insert data into aAOI and AOS table to hold to and botom 5 themes
+     *
+     * @param table name of the table AOI or AOS
+     * @param id id
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
+    private void insertIntoAOTable(String table, int id, String statement, String theme) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getCreateAOTableQuarry(table);
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setString(3,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to "+ table);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
     }
 
-    public void insertAOS(int id, String statement, float coc, String theme) throws DataBaseException {
-        this.insertAO(DataBaseConstant.AOS_TABLE,id,statement,coc,theme);
+    //insert in to AO temps
+    public void insertAOITemp(int id, String statement, float coc, String theme) throws DataBaseException {
+
+        this.insertAOSort(DataBaseConstant.AOI_TEMP_TABLE,id,statement,coc,theme);
+    }
+
+    public void insertAOSTemp(int id, String statement, float coc, String theme) throws DataBaseException {
+        this.insertAOSort(DataBaseConstant.AOS_TEMP_TABLE,id,statement,coc,theme);
+    }
+
+    //inser to AO last
+    public void insertAOI(int id, String statement, String theme) throws DataBaseException {
+
+        this.insertIntoAOTable(DataBaseConstant.AOI_TABLE,id,statement,theme);
+    }
+
+    public void insertAOS(int id, String statement, String theme) throws DataBaseException {
+        this.insertIntoAOTable(DataBaseConstant.AOS_TABLE,id,statement,theme);
     }
     //other generic DB methods
 
