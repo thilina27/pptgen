@@ -9,28 +9,30 @@ import java.io.IOException;
 
 /**
  * Created by Thilina on 6/8/2016.
+ *
+ * Read excel files and insert data to Database
  */
-public class ReadFile {
+class ReadFile {
 
     private static DataBase database;
     private static Sheet sheet;
-    private static boolean isCreated = false;
     private static Workbook workBook;
     private static boolean otherStatement = false;
     private static boolean gptw = false;
+    private static int grandMeanColoumn;
+    private static int grandMeanRow;
 
-    public static void init(){
+    static void init(){
 
         try {
             database = new DataBase();
-            isCreated = true;
         } catch (DataBaseException e) {
             System.out.println("Database create fail");
             System.out.println(e);
         }
     }
 
-    public static void readStatements(String filename, String companyName, String sheetName){
+    static void readStatements(String filename, String companyName, String sheetName){
 
         try {
 
@@ -86,13 +88,14 @@ public class ReadFile {
                     val = val.trim();
 
                     if(val.equalsIgnoreCase(FileReadConstant.GRANDMEAN)){
+                        grandMeanColoumn = numberOfCols;
+                        grandMeanRow = tempRowNum;
                         float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                         float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
                         database.insertAverage(cVal,bVal,DataBaseConstant.GRAND_MEAN_INDEX);
                         break;
                     }
                     else if(val.equalsIgnoreCase(FileReadConstant.AVERAGE)) {
-
                         //set array for averages
                         if(numberOfAverages < FileReadConstant.MAX_NUM_OF_AVERAGES){
                             float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
@@ -106,15 +109,13 @@ public class ReadFile {
                             }
                         }
                     }
-
                     //read other statements
                     else if(otherStatement){
-                        String state = val;
                         if(row1.getCell(numberOfCols+1) !=null && !row1.getCell(numberOfCols+1).toString().equalsIgnoreCase("")){
                             float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                             float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
-                            database.insertOtherStatement(state,cVal,bVal);
-                            database.insertCoreStatement(state,cVal,bVal);
+                            database.insertOtherStatement(val,cVal,bVal);
+                            database.insertCoreStatement(val,cVal,bVal);
                         }
                         else{
                             otherStatement = false;
@@ -124,22 +125,20 @@ public class ReadFile {
 
                     //read great place to work statements
                     else if(gptw){
-                        String state = val;
                         if(row1.getCell(numberOfCols+1) !=null && !row1.getCell(numberOfCols+1).toString().equalsIgnoreCase("")){
                             float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                             float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
-                            database.insertGPTWStatement(state,cVal,bVal);
-                            database.insertCoreStatement(state,cVal,bVal);
+                            database.insertGPTWStatement(val,cVal,bVal);
+                            database.insertCoreStatement(val,cVal,bVal);
                         }
                         else{
                             gptw = false;
                         }
                     }
                     else {
-                        String state = val;
                         float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                         float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
-                        database.insertCoreStatement(state,cVal,bVal);
+                        database.insertCoreStatement(val,cVal,bVal);
                     }
 
                 }
@@ -158,7 +157,7 @@ public class ReadFile {
 
     }
 
-    public static void readCOCOR(String filename, String sheetName){
+    static void readCOCOR(String filename, String sheetName){
 
         try {
 
@@ -225,7 +224,7 @@ public class ReadFile {
 
     }
 
-    public static void readThemes(String filename, String sheetName){
+    static void readThemes(String filename, String sheetName){
 
         try {
 
@@ -240,8 +239,8 @@ public class ReadFile {
                     System.out.println("NULL row found");
                     break;
                 }
-                String statement = row.getCell(FileReadConstant.THEME_SHEET_STATEMET_COLOUMN).toString();
-                String theme = row.getCell(FileReadConstant.THEME_SHEET_THEME_COLOUMN).toString();
+                String statement = row.getCell(FileReadConstant.THEME_SHEET_STATEMENT_COLUMN).toString();
+                String theme = row.getCell(FileReadConstant.THEME_SHEET_THEME_COLUMN).toString();
                 if(statement.equalsIgnoreCase("") || theme.equalsIgnoreCase("")){
                     System.out.println("no themes " + sheet.getLastRowNum());
                     break;
@@ -257,10 +256,18 @@ public class ReadFile {
         }
     }
 
-    public static void closeall(){
+    static void createSortData(){
+        database.sortTable();
+    }
+
+    static void closeall(){
         //todo remove this and do it correctly
         database.closeConnection(); //for testing
 
+    }
+
+    static DataBase getDataBase(){
+        return database;
     }
 
 }

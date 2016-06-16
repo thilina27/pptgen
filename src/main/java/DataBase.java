@@ -1,16 +1,22 @@
 import java.io.File;
 import java.sql.*;
 
+
 /**
  * Created by Thilina on 6/8/2016.
+ *
+ * This class store all data bse connections and table details.
+ * This also handle the creation of table and insertion.
+ * Keep all data read from excel file in tables and arrays and provide package local methods to the
+ * DataStore to provide data to the other packages.
+ *
  */
-public class DataBase {
+class DataBase {
 
     private Connection con;
     private Statement stmnt;
     private int statementId = 0;
     private float avarages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
-    private float gradmean[] = new float[2];
     private int numberOfRespondents;
     private int cocID = 0;
     private int themeID = 0;
@@ -24,7 +30,7 @@ public class DataBase {
      *
      * @throws DataBaseException
      * */
-    public DataBase() throws DataBaseException {
+    DataBase() throws DataBaseException {
 
         try {
             this.createDB();
@@ -75,6 +81,16 @@ public class DataBase {
         createtablesql = DataBaseConstant.getCreateThemeTableQuarry(DataBaseConstant.THEME_TABLE);
         stmnt.executeUpdate(createtablesql);
         createtablesql = DataBaseConstant.getCreateSortTableQuarry(DataBaseConstant.SORT_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOI_TEMP_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOSortQuarry(DataBaseConstant.AOS_TEMP_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.AOI_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.AOS_TABLE);
+        stmnt.executeUpdate(createtablesql);
+        createtablesql = DataBaseConstant.getCreateAOTableQuarry(DataBaseConstant.DEMOGRAPHY_TABLE);
         stmnt.executeUpdate(createtablesql);
         stmnt.close();
         System.out.println("Tables created successfully");
@@ -128,7 +144,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insetIntoCOCTable(String statement, float coc, float stdev) throws DataBaseException {
+    void insetIntoCOCTable(String statement, float coc, float stdev) throws DataBaseException {
 
         try {
             con.setAutoCommit(false);
@@ -151,7 +167,54 @@ public class DataBase {
 
     }
 
-    public void insertIntoThemeTable(String statement, String theme) throws DataBaseException {
+    /**
+     * @author Thilina
+     *
+     * insert calculated data into sort table
+     *
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
+    private void insertIntoSortTable(int id, String statement, float cocor, float stdev, float abs,
+                                     float pres, String theme)
+            throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getPreparedInsetSortTable();
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setFloat(3,cocor);
+            prestatement.setFloat(4,stdev);
+            prestatement.setFloat(5,abs);
+            prestatement.setFloat(6,pres);
+            prestatement.setString(7,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Sort update");
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
+    /**
+     * @author Thilina
+     *
+     * insert data into theme table wich map the theme and the sattement
+     *
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
+    void insertIntoThemeTable(String statement, String theme) throws DataBaseException {
 
         try {
             con.setAutoCommit(false);
@@ -171,6 +234,8 @@ public class DataBase {
         }
     }
 
+
+
     /**
      * @author Thilina
      *
@@ -183,7 +248,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertCoreStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertCoreStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.TABLE_STATEMENT,statement,company,bench);
     }
 
@@ -199,7 +264,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertOtherStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertOtherStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.OTHER_STATEMENTS_TABLE,statement,company,bench);
     }
 
@@ -215,7 +280,7 @@ public class DataBase {
      * @throws DataBaseException
      *
      * */
-    public void insertGPTWStatement(String statement, float company, float bench) throws DataBaseException {
+    void insertGPTWStatement(String statement, float company, float bench) throws DataBaseException {
         this.insertIntoStatementsTable(DataBaseConstant.GPTW_STATEMENTS,statement,company,bench);
     }
 
@@ -228,21 +293,17 @@ public class DataBase {
      * @param benchAverage average value of the bench mark
      * @param numberOfAverages index of average array
      * */
-    public void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
+    void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
 
         avarages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
         avarages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
 
     }
 
-    public void setNumberOfRespondents(int val){
+    void setNumberOfRespondents(int val){
         numberOfRespondents = val;
     }
 
-    //get methods
-    public int getNumberOfRespondents(){
-        return numberOfRespondents;
-    }
 
     /**
      * @author Thilina
@@ -253,7 +314,7 @@ public class DataBase {
      *
      * @throws SQLException
      * */
-    public ResultSet runQuarry(String quarry) throws SQLException {
+     ResultSet runQuarry(String quarry) throws SQLException {
 
         con.setAutoCommit(false);
         stmnt = con.createStatement();
@@ -262,10 +323,7 @@ public class DataBase {
         return rs;
     }
 
-    public float[][] getAvarages(){
-        return avarages;
-    }
-
+    //aoi and aos section
     /**
      * @author Thilina
      *
@@ -273,14 +331,146 @@ public class DataBase {
      *
      *
      * */
-    public void sortTable(){
+     void sortTable(){
         try {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
             //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
             //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
+                String statement = resultSet.getString(DataBaseConstant.STATEMENT_COLUMN);
+                float company = resultSet.getFloat(DataBaseConstant.COMPANY_COLUMN);
+                float bench = resultSet.getFloat(DataBaseConstant.BENCHMARK_COLUMN);
+                float cocor = resultSet.getFloat(DataBaseConstant.COC_OR_COLUMN);
+                float stdev = resultSet.getFloat(DataBaseConstant.STDEV_COLUMN);
+                String theme = resultSet.getString(DataBaseConstant.THEME_COLOUMN);
+                float present = ((company - bench)/company)*100;
+
+                this.insertIntoSortTable(id,statement,cocor,stdev,company,present,theme);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (DataBaseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @author Thilina
+     *
+     * inser into AOS and AOI temp tables to sort and extract top 5 and botom 5 themes
+     *
+     * @param table Name of the table AOI or AOS
+     * @param id id
+     * @param statement statement
+     * @param coc coc value of the statement
+     * @param theme theme of the statement
+     *
+     * @throws DataBaseException
+     * */
+    private void insertAOSort(String table, int id, String statement, float coc, String theme) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getPreparedInsetAOSortTable(table);
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setFloat(3,coc);
+            prestatement.setString(4,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to " + table);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
+    /**
+     * @author Thilina
+     *
+     * insert data into aAOI and AOS table to hold to and botom 5 themes
+     *
+     * @param table name of the table AOI or AOS
+     * @param id id
+     * @param statement statement
+     * @param theme theme for statement
+     *
+     * @throws DataBaseException
+     *
+     * */
+    private void insertIntoAOTable(String table, int id, String statement, String theme) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getCreateAOTableQuarry(table);
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,statement);
+            prestatement.setString(3,theme);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to "+ table);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
+        }
+    }
+
+    //insert in to AO temps
+    public void insertAOITemp(int id, String statement, float coc, String theme) throws DataBaseException {
+
+        this.insertAOSort(DataBaseConstant.AOI_TEMP_TABLE,id,statement,coc,theme);
+    }
+
+    public void insertAOSTemp(int id, String statement, float coc, String theme) throws DataBaseException {
+        this.insertAOSort(DataBaseConstant.AOS_TEMP_TABLE,id,statement,coc,theme);
+    }
+
+    //inser to AO last
+    public void insertAOI(int id, String statement, String theme) throws DataBaseException {
+
+        this.insertIntoAOTable(DataBaseConstant.AOI_TABLE,id,statement,theme);
+    }
+
+    public void insertAOS(int id, String statement, String theme) throws DataBaseException {
+        this.insertIntoAOTable(DataBaseConstant.AOS_TABLE,id,statement,theme);
+    }
+
+    //demography
+    /**
+     *
+     * @author Thilina
+     *
+     * Provide method to insert value in to demography table
+     *
+     * @param id id
+     * @param demography demography
+     * @param factor factors of the demography
+     * @param mean geand mean value for demography factor
+     *
+     * */
+    void insertDemography(int id, String demography, String factor, float mean) throws DataBaseException {
+
+        try {
+            con.setAutoCommit(false);
+            String quarry = DataBaseConstant.getPreparedInsertDemography();
+            PreparedStatement prestatement= con.prepareStatement(quarry);
+            prestatement.setInt(1,id);
+            prestatement.setString(2,demography);
+            prestatement.setString(3,factor);
+            prestatement.setFloat(4,mean);
+            prestatement.executeUpdate();
+            con.commit();
+
+            System.out.println("Inset successful in to " + DataBaseConstant.DEMOGRAPHY_TABLE);
+
+        } catch (SQLException e) {
+            throw new DataBaseException(e);
         }
     }
 
@@ -292,7 +482,7 @@ public class DataBase {
      * This will close connection to the Data base
      *
      * */
-    public boolean closeConnection(){
+    boolean closeConnection(){
 
         boolean closed = false;
 
@@ -337,6 +527,28 @@ public class DataBase {
         }
 
         return isDelete;
+    }
+
+    //methods for data store
+    //get methods
+
+    int getNumberOfRespondents(){
+        return numberOfRespondents;
+    }
+    float getCompanyAvarageOfSectoin(int section){
+        return avarages[section][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    }
+
+    float getBenchMarkAvarageOfSectoin(int section){
+        return avarages[section][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+    }
+
+    float getCompnayGrandMean(){
+        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    }
+
+    float getBenchMarkGrandMean(){
+        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
     }
 
 }
