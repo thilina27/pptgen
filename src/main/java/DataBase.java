@@ -16,7 +16,8 @@ class DataBase {
     private Connection con;
     private Statement stmnt;
     private int statementId = 0;
-    private float avarages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
+    private float allAverages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
+    private float averages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES][2];
     private int numberOfRespondents;
     private int cocID = 0;
     private int themeID = 0;
@@ -287,7 +288,7 @@ class DataBase {
     /**
      * @author Thilina
      *
-     * Inset avarages in to avarage array
+     * Inset allAverages in to avarage array
      *
      * @param companyAverage average value of the company
      * @param benchAverage average value of the bench mark
@@ -295,8 +296,8 @@ class DataBase {
      * */
     void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
 
-        avarages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
-        avarages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
+        allAverages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
+        allAverages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
 
     }
 
@@ -533,20 +534,30 @@ class DataBase {
     int getNumberOfRespondents(){
         return numberOfRespondents;
     }
-    float getCompanyAvarageOfSectoin(int section){
-        return avarages[section][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+
+    //copy basic averages from all averages
+    private void setupAverages(){
+
+        for(int i=0;i<FileReadConstant.MAX_NUM_OF_AVERAGES;i++){
+            for(int j=0;j<2;j++){
+                averages[i][j] = allAverages[i][j];
+            }
+        }
+
     }
 
-    float getBenchMarkAvarageOfSectoin(int section){
-        return avarages[section][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+    float[][] getAverages(){
+        this.setupAverages();
+        return averages;
+
     }
 
-    float getCompnayGrandMean(){
-        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    float getCompanyGrandMean(){
+        return allAverages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
     }
 
     float getBenchMarkGrandMean(){
-        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+        return allAverages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
     }
 
 }
