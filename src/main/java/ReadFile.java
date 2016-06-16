@@ -21,6 +21,7 @@ class ReadFile {
     private static boolean gptw = false;
     private static int grandMeanColoumn;
     private static int grandMeanRow;
+    private static  int startDemoColumn;
 
     static void init(){
 
@@ -63,6 +64,9 @@ class ReadFile {
                     numberOfCols++;
                 }
             } // end find location
+
+            //go 3 columns right to get the relevant column of demography
+            startDemoColumn = numberOfCols +3;
 
             //read number of respondents
             Row row1 = sheet.getRow(numberOfRows);
@@ -249,8 +253,68 @@ class ReadFile {
 
             }
 
+            workBook.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (DataBaseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @author Niroshan
+     *
+     * Read demography details from worksheet
+     *
+     * @param filename file name
+     * @param sheetName  sheet name of the file
+     * */
+    static void readDemoFactors(String filename, String sheetName)
+    {
+
+        try {
+
+            workBook = new XSSFWorkbook(new FileInputStream(filename));
+
+            sheet = workBook.getSheet(sheetName);
+
+            // find the relavent location to start get data
+            String demoName = "";
+            String demoCritaria;
+            String demoScore;
+            float demoValue;
+            Row demoNameRow = sheet.getRow(0);
+            Row demoCriteriaRow = sheet.getRow(1);
+            Row demoScoreRow = sheet.getRow(grandMeanRow);
+            boolean isFinish = false;
+            int id = 0;
+
+            for(int col = startDemoColumn; !isFinish; col++)
+            {
+                if(!(demoNameRow.getCell(col)==null) && !demoNameRow.getCell(col).toString().equalsIgnoreCase(""))
+                {
+                    demoName = demoNameRow.getCell(col).toString();
+                }
+                demoCritaria = demoCriteriaRow.getCell(col).toString();
+                demoScore = demoScoreRow.getCell(col).toString();
+                if(!demoScore.equalsIgnoreCase("-")){
+                    demoValue = Float.parseFloat(demoScore);
+                    database.insertDemography(id++, demoName, demoCritaria, demoValue);
+                }
+                if((demoNameRow.getCell(col+1)==null || demoNameRow.getCell(col+1).toString().equalsIgnoreCase(""))
+                        && (demoCriteriaRow.getCell(col+1)==null
+                        || demoCriteriaRow.getCell(col+1).toString().equalsIgnoreCase("")))
+                {
+                    isFinish = true;
+                }
+            }
+            workBook.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //todo handle or throw
         } catch (DataBaseException e) {
             e.printStackTrace();
         }
