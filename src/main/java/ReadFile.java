@@ -239,8 +239,8 @@ class ReadFile {
                     System.out.println("NULL row found");
                     break;
                 }
-                String statement = row.getCell(FileReadConstant.THEME_SHEET_STATEMET_COLOUMN).toString();
-                String theme = row.getCell(FileReadConstant.THEME_SHEET_THEME_COLOUMN).toString();
+                String statement = row.getCell(FileReadConstant.THEME_SHEET_STATEMENT_COLUMN).toString();
+                String theme = row.getCell(FileReadConstant.THEME_SHEET_THEME_COLUMN).toString();
                 if(statement.equalsIgnoreCase("") || theme.equalsIgnoreCase("")){
                     System.out.println("no themes " + sheet.getLastRowNum());
                     break;

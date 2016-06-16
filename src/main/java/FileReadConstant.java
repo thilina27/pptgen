@@ -14,6 +14,6 @@ class FileReadConstant {
     static final String STDEV = "STDEV";
 
     static final int THEME_SHEET_START_ROW = 1;
-    static final int THEME_SHEET_STATEMET_COLOUMN = 0;
-    static final int THEME_SHEET_THEME_COLOUMN = 1;
+    static final int THEME_SHEET_STATEMENT_COLUMN = 0;
+    static final int THEME_SHEET_THEME_COLUMN = 1;
 }
