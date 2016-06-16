@@ -11,6 +11,7 @@ public class TestDrive {
         ReadFile.readCOCOR("excl\\cocrep.xlsx", "Worksheet");
         ReadFile.readThemes("excl\\test2.xlsx","Std Themes");
         ReadFile.createSortData();
+        Analyzer.start();
         ReadFile.closeall();
 
         long endTime   = System.currentTimeMillis();
