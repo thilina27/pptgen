@@ -101,8 +101,8 @@ public class DataStore {
         }
 
         String getStavalQua = "SELECT "+DataBaseConstant.TABLE_STATEMENT+","+ DataBaseConstant.BENCHMARK_COLUMN
-                + "FROM "+DataBaseConstant.TABLE_STATEMENT
-                + "WHERE "+DataBaseConstant.TABLE_STATEMENT
+                + " FROM "+DataBaseConstant.TABLE_STATEMENT
+                + " WHERE "+DataBaseConstant.TABLE_STATEMENT
                 + "."+DataBaseConstant.TABLE_STATEMENT+" = "+cover+statement+cover+";";
 
         try {
@@ -183,8 +183,8 @@ public class DataStore {
             cover = "\"";
         }
 
-        String quarry = "SELECT"+ DataBaseConstant.FACTOR_COLUMN+","+DataBaseConstant.MEAN_COLUMN
-                + "FROM "+DataBaseConstant.DEMOGRAPHY_TABLE
+        String quarry = "SELECT "+ DataBaseConstant.FACTOR_COLUMN+","+DataBaseConstant.MEAN_COLUMN
+                + " FROM "+DataBaseConstant.DEMOGRAPHY_TABLE
                 + " WHERE " +DataBaseConstant.DEMOGRAPHY_TABLE+"."+DataBaseConstant.DEMOGRAPHY_COLUMN
                 + " = "+cover+demo+cover+";";
 
@@ -210,8 +210,8 @@ public class DataStore {
 
         ArrayList<String> list = new ArrayList<String>();
 
-        String quarry = "SELECT"+ DataBaseConstant.THEME_COLOUMN
-                + "FROM "+DataBaseConstant.AOI_TABLE+";";
+        String quarry = "SELECT "+ DataBaseConstant.THEME_COLOUMN
+                + " FROM "+DataBaseConstant.AOI_TABLE+";";
 
         return list = getThemes(quarry);
     }
@@ -223,8 +223,8 @@ public class DataStore {
 
         ArrayList<String> list = new ArrayList<String>();
 
-        String quarry = "SELECT"+ DataBaseConstant.THEME_COLOUMN
-                + "FROM "+DataBaseConstant.AOS_TABLE+";";
+        String quarry = "SELECT "+ DataBaseConstant.THEME_COLOUMN
+                + " FROM "+DataBaseConstant.AOS_TABLE+";";
 
         return list = getThemes(quarry);
     }
@@ -265,9 +265,9 @@ public class DataStore {
             cover = "\"";
         }
 
-        String quarry = "SELECT"+ DataBaseConstant.STATEMENT_COLUMN
-                + "FROM"+ DataBaseConstant.THEME_TABLE
-                + "WHERE" +DataBaseConstant.THEME_COLOUMN+"="+cover+theme+cover+";";
+        String quarry = "SELECT "+ DataBaseConstant.STATEMENT_COLUMN
+                + " FROM "+ DataBaseConstant.SORT_TABLE
+                + " WHERE " +DataBaseConstant.THEME_COLOUMN+"="+cover+theme+cover+";";
 
         try {
             ResultSet rs = dataBase.runQuarry(quarry);
