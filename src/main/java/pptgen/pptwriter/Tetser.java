@@ -1,9 +1,6 @@
 package pptgen.pptwriter;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xslf.usermodel.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,52 +23,20 @@ public class Tetser {
 
             pptx = new XMLSlideShow(new FileInputStream("ppts//New Presentation format with tags.pptx"));
             slides = pptx.getSlides();
-            XSLFSlide slide = slides.get(17);
+            XSLFSlide slide = slides.get(40);
 
             List<XSLFShape> sh = slide.getShapes();
 
-            //insert demos
-            int i = 0;
-            int s = 2;
-
             for (XSLFShape aSh : sh) {
-
-                String name = aSh.getShapeName();
-                if(name != null && name.contains("T")){
-                    if(s == i){
-                        break;
-                    }
-                    if (aSh instanceof XSLFTextShape) {
-                        XSLFTextShape textShape = (XSLFTextShape)aSh;
-                        String text = textShape.getText();
-
-                        if(text.contains("<DEMO>")){
-                            text = text.replace("<DEMO>","demos");
-                            i++;
-                        }
-                        textShape.setText(text);
-                    }
+                if (aSh instanceof XSLFTable){
+                    XSLFTable tb = (XSLFTable)aSh;
+                    tb.getCell(1,0).setText("one");
+                    break;
                 }
-            }
-
-            //remove extra demos
-            for (int j=0;j<sh.size();j++) {
-
-                XSLFShape aSh = sh.get(j);
                 String name = aSh.getShapeName();
-                if(name != null && name.contains("T")){
-                    if (aSh instanceof XSLFTextShape) {
-                        XSLFTextShape textShape = (XSLFTextShape)aSh;
-                        String text = textShape.getText();
-                        System.out.println(text);
-                        if (text.contains("<DEMO>")) {
-                            slide.removeShape(aSh);
-                        }
+                System.out.println(name);
 
-                    }
-                }
             }
-
 
 
             OutputStream out = new FileOutputStream("ppts//testout.pptx");

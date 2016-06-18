@@ -1,12 +1,10 @@
 package pptgen.pptwriter;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xslf.usermodel.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -190,23 +188,77 @@ public class PptCreator {
         }
     }
 
+    public void createAOINAOSList(ArrayList<String> aoi,ArrayList<String> aos){
 
-    private void replceText1(String text, String replace, int slideNumber){
-
-        XSLFSlide slide = slides.get(slideNumber);
-
+        if (PptReadConstant.AOI_AND_AOS == 0){
+            //// TODO: 6/18/2016 handle this
+        }
+        XSLFSlide slide = slides.get(PptReadConstant.AOI_AND_AOS);
         List<XSLFShape> shapes = slide.getShapes();
-        for (XSLFShape shape: shapes) {
-            if (shape instanceof XSLFTextShape) {
-                XSLFTextShape textShape = (XSLFTextShape)shape;
-                String slideText = textShape.getText();
-                if(slideText.contains(text)){
-                    textShape.setText("Ba ba ab");
+        int i=0;
+        int j=0;
+        for (XSLFShape aSh : shapes) {
+
+            String name = aSh.getShapeName();
+            if(name != null && name.contains(PptReadConstant.TEXT_BOX)){
+                if (aSh instanceof XSLFTextShape) {
+                    XSLFTextShape textShape = (XSLFTextShape)aSh;
+                    String text = textShape.getText();
+                    if(text.contains(PptReadConstant.STRENGTH_TOKEN)){
+                        text = text.replace(PptReadConstant.STRENGTH_TOKEN,aos.get(i++));
+                        textShape.setText(text);
+                    }
+                    else if(text.contains(PptReadConstant.IMPROVEMENT_TOKEN)){
+                        text = text.replace(PptReadConstant.IMPROVEMENT_TOKEN,aoi.get(j++));
+                        textShape.setText(text);
+                    }
                 }
+            }
+        }
 
+        this.createAO(aos,PptReadConstant.STRENGTH_TOKEN,PptReadConstant.AOI_AND_AOS+PptReadConstant.AOS_DIFF);
+        this.createAO(aoi,PptReadConstant.IMPROVEMENT_TOKEN,PptReadConstant.AOI_AND_AOS+PptReadConstant.AOI_DIFF);
+    }
 
+    private void createAO(ArrayList<String> ao, String token, int slideNum){
+
+        XSLFSlide slide = slides.get(slideNum);
+        List<XSLFShape> shapes = slide.getShapes();
+        int i=0;
+        for (XSLFShape aShape : shapes) {
+            String name = aShape.getShapeName();
+            if(name != null && name.contains(PptReadConstant.TEXT_BOX)){
+                if (aShape instanceof XSLFTextShape) {
+                    XSLFTextShape textShape = (XSLFTextShape) aShape;
+                    String text = textShape.getText();
+
+                    if(text.contains(token)){
+                        text = text.replace(token,ao.get(i++));
+                    }
+                    textShape.setText(text);
+                }
             }
         }
     }
 
+    public void createKeyDrives(ArrayList<String> kds){
+
+        if (PptReadConstant.KEY_DRIVES == 0){
+            // TODO: 6/18/2016 handle this 
+        }
+        XSLFSlide slide = slides.get(PptReadConstant.KEY_DRIVES);
+        List<XSLFShape> shapes = slide.getShapes();
+
+        for (XSLFShape aSh : shapes) {
+            if (aSh instanceof XSLFTable){
+                XSLFTable tb = (XSLFTable)aSh;
+                tb.getCell(1,0).setText(kds.get(0));
+                tb.getCell(2,0).setText(kds.get(1));
+                tb.getCell(3,0).setText(kds.get(2));
+                tb.getCell(4,0).setText(kds.get(3));
+                tb.getCell(5,0).setText(kds.get(4));
+                break;
+            }
+        }
+    }
 }
