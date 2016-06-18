@@ -1,3 +1,5 @@
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.sql.*;
 
@@ -22,6 +24,8 @@ class DataBase {
     private int cocID = 0;
     private int themeID = 0;
 
+    private final static Logger logger = Logger.getLogger(DataBase.class);
+
     /**
      * @author Thilina
      *
@@ -37,12 +41,14 @@ class DataBase {
             this.createDB();
             this.createTables();
         } catch (ClassNotFoundException e) {
+            logger.error("Catch Class Not Found");
             throw new DataBaseException(e);
         } catch (SQLException e) {
+            logger.error("Catch SQL Exception");
             throw new DataBaseException(e);
         }
 
-        System.out.println("Database added");
+        logger.info("Database create successful");
 
     }
 
@@ -94,7 +100,7 @@ class DataBase {
         createtablesql = DataBaseConstant.getCreateDemographyTableQuarry(DataBaseConstant.DEMOGRAPHY_TABLE);
         stmnt.executeUpdate(createtablesql);
         stmnt.close();
-        System.out.println("Tables created successfully");
+        logger.info("Tables created successfully");
     }
 
     /**
@@ -125,9 +131,8 @@ class DataBase {
             statementId++;
             con.commit();
 
-            System.out.println("Inset successful in to " + table);
-
         } catch (SQLException e) {
+            logger.error("Fail to insert into " + table);
             throw new DataBaseException(e);
         }
 
@@ -160,9 +165,8 @@ class DataBase {
             cocID++;
             con.commit();
 
-            System.out.println("Inset successful in to COC or");
-
         } catch (SQLException e) {
+            logger.error("Fail to inset into table "+DataBaseConstant.COC_TABLE);
             throw new DataBaseException(e);
         }
 
@@ -197,9 +201,8 @@ class DataBase {
             prestatement.executeUpdate();
             con.commit();
 
-            System.out.println("Sort update");
-
         } catch (SQLException e) {
+            logger.error("Fail to insert into " + DataBaseConstant.SORT_TABLE);
             throw new DataBaseException(e);
         }
     }
@@ -228,14 +231,11 @@ class DataBase {
             themeID++;
             con.commit();
 
-            System.out.println("Inset successful in to theme or");
-
         } catch (SQLException e) {
+            logger.error("Fail to inset into " + DataBaseConstant.THEME_TABLE);
             throw new DataBaseException(e);
         }
     }
-
-
 
     /**
      * @author Thilina
@@ -335,8 +335,7 @@ class DataBase {
      void sortTable(){
         try {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
-            //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
-            //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
+
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
                 String statement = resultSet.getString(DataBaseConstant.STATEMENT_COLUMN);
@@ -351,8 +350,10 @@ class DataBase {
             }
 
         } catch (SQLException e) {
+            logger.error("Got SQLException on sort Table insertion",e);
             e.printStackTrace();
         } catch (DataBaseException e) {
+            logger.error("Got DatabaseException on sort Table insertion",e);
             e.printStackTrace();
         }
     }
@@ -383,9 +384,8 @@ class DataBase {
             prestatement.executeUpdate();
             con.commit();
 
-            System.out.println("Inset successful in to " + table);
-
         } catch (SQLException e) {
+            logger.error("Got SQLException on inset into " + table);
             throw new DataBaseException(e);
         }
     }
@@ -413,9 +413,8 @@ class DataBase {
             prestatement.executeUpdate();
             con.commit();
 
-            System.out.println("Inset successful in to "+ table);
-
         } catch (SQLException e) {
+            logger.error("Got SQLException on inset into " + table);
             throw new DataBaseException(e);
         }
     }
@@ -466,9 +465,8 @@ class DataBase {
             prestatement.executeUpdate();
             con.commit();
 
-            System.out.println("Inset successful in to " + DataBaseConstant.DEMOGRAPHY_TABLE);
-
         } catch (SQLException e) {
+            logger.error("Got SQLException on inset into " + DataBaseConstant.DEMOGRAPHY_TABLE);
             throw new DataBaseException(e);
         }
     }
@@ -486,13 +484,12 @@ class DataBase {
         boolean closed = false;
 
         try {
-
             con.close();
-           //this.deleteDataBase();
+            this.deleteDataBase();
             closed = true;
         } catch (SQLException e) {
-            //todo handle
-            e.printStackTrace();
+            logger.error("Fail to lose connection to DB " ,e);
+
         }
 
         return closed;
@@ -513,16 +510,13 @@ class DataBase {
 
             if(file.delete()){
                 isDelete = true;
-                System.out.println(file.getName() + " is deleted!");
+                logger.info(file.getName() + " is deleted!");
             }else{
-                System.out.println("Delete operation is failed.");
+                logger.error("Delete operation is failed.");
             }
 
         }catch(Exception e){
-
-            //todo handle
-            e.printStackTrace();
-
+            logger.error("Delete operation is failed.",e);
         }
 
         return isDelete;

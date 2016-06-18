@@ -1,3 +1,5 @@
+import org.apache.log4j.Logger;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -14,6 +16,8 @@ class Analyzer {
     private static int aoID = 0;
     private static int themId = 0;
 
+    private final static Logger logger = Logger.getLogger(Analyzer.class);
+
     static void start(){
 
         dataBase = ReadFile.getDataBase();
@@ -25,7 +29,7 @@ class Analyzer {
     private static void insertIntoTemptable(String tableName) throws DataBaseException {
 
         if(resultset == null) {
-            System.out.println("result set not initialize");
+            logger.error("result set not initialize");
             throw new DataBaseException("result set not initialize");
         }
 
@@ -47,7 +51,7 @@ class Analyzer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Fail to Fetch data from DB",e);
         }
 
     }
@@ -55,7 +59,7 @@ class Analyzer {
     private static void insertThemeTable(String tableName) throws DataBaseException {
 
         if(resultset == null) {
-            System.out.println("result set not initialize");
+            logger.error("result set not initialize");
             throw new DataBaseException("result set not initialize");
         }
 
@@ -74,7 +78,7 @@ class Analyzer {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Fail to Fetch data from DB",e);
         }
 
     }
@@ -109,9 +113,9 @@ class Analyzer {
             insertThemeTable(DataBaseConstant.AOS_TABLE);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Fail to insert AOS data ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Fail to insert AOS data ",e);
         }
 
     }
@@ -147,9 +151,9 @@ class Analyzer {
             insertThemeTable(DataBaseConstant.AOI_TABLE);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Fail to insert AOI data ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Fail to insert AOI data ",e);
         }
     }
 }

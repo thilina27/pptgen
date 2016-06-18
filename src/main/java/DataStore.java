@@ -12,10 +12,62 @@ import java.util.ArrayList;
 public class DataStore {
 
     private static DataBase dataBase;
-    private static int numberOfDemograpy = 0;
+    private static int numberOfDemography = 0;
 
-    public static void InitDataStore(DataBase dataBase){
-        dataBase = dataBase;
+    /**
+     * Call these to read and store data in to tables
+     * */
+    public void initFileRead(){
+        ReadFile.init();
+    }
+
+    /**
+     * Read statements from excel file
+     *
+     * @param fileName Excel file name
+     * @param companyName name of the company as in excel sheet
+     * @param workSheetName name of the work sheet that contains statements
+     *
+     * **/
+    public void readSatements(String fileName, String companyName, String workSheetName){
+        ReadFile.readStatements(fileName,companyName,workSheetName);
+    }
+
+    /**
+     *
+     * read COC_OR from excel
+     *
+     * @param fileName excel file that has coc or values
+     * @param worksheet sheet name that has coc or values
+     * */
+    public void readCOCOR(String fileName, String worksheet){
+        ReadFile.readCOCOR(fileName,worksheet);
+    }
+
+    /**
+     *
+     * read COC_OR from excel
+     *
+     * @param fileName excel file that has themes
+     * @param worksheet sheet name that has themes
+     * */
+    public static void readThemes(String fileName, String worksheet){
+        ReadFile.readThemes(fileName,worksheet);
+    }
+
+    /**
+     *
+     * read COC_OR from excel
+     *
+     * @param fileName excel file that has Demography data
+     * @param worksheet sheet name that has Demography data
+     * */
+    public static void readDemography(String fileName, String worksheet){
+        ReadFile.readDemoFactors(fileName,worksheet);
+    }
+
+    public static void InitDataStore(DataBase dataBaseOut){
+        dataBase = dataBaseOut;
     }
 
     /**
@@ -151,8 +203,8 @@ public class DataStore {
      * */
     public static int getNumberOfDemography(){
 
-        if(numberOfDemograpy !=0 ){
-            return numberOfDemograpy;
+        if(numberOfDemography !=0 ){
+            return numberOfDemography;
         }
 
         String quarry = "SELECT COUNT( DISTINCT "+DataBaseConstant.DEMOGRAPHY_COLUMN+") as C FROM "
@@ -160,12 +212,12 @@ public class DataStore {
 
         try {
             ResultSet rs = dataBase.runQuarry(quarry);
-            numberOfDemograpy = rs.getInt("C");
+            numberOfDemography = rs.getInt("C");
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return numberOfDemograpy;
+        return numberOfDemography;
     }
 
     /**

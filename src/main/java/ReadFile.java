@@ -1,3 +1,4 @@
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,17 +20,17 @@ class ReadFile {
     private static Workbook workBook;
     private static boolean otherStatement = false;
     private static boolean gptw = false;
-    private static int grandMeanColoumn;
     private static int grandMeanRow;
     private static  int startDemoColumn;
+
+    private final static Logger logger = Logger.getLogger(ReadFile.class);
 
     static void init(){
 
         try {
             database = new DataBase();
         } catch (DataBaseException e) {
-            System.out.println("Database create fail");
-            System.out.println(e);
+            logger.error("Database create fail",e);
         }
     }
 
@@ -92,7 +93,6 @@ class ReadFile {
                     val = val.trim();
 
                     if(val.equalsIgnoreCase(FileReadConstant.GRANDMEAN)){
-                        grandMeanColoumn = numberOfCols;
                         grandMeanRow = tempRowNum;
                         float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                         float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
@@ -106,7 +106,6 @@ class ReadFile {
                             float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
                             database.insertAverage(cVal,bVal,numberOfAverages);
                             numberOfAverages++;
-                            System.out.println("Average "  + numberOfAverages);
                             if (numberOfAverages == FileReadConstant.MAX_NUM_OF_AVERAGES){
                                 otherStatement = true;
                                 tempRowNum++;
@@ -151,12 +150,11 @@ class ReadFile {
             }
 
             workBook.close();
-
+            logger.info("Statement read successful");
         } catch (IOException e) {
-            e.printStackTrace();
-            //todo handle or throw
+            logger.error("Read Statements error due to file ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Read Statements error due to database ",e);
         }
 
     }
@@ -181,8 +179,6 @@ class ReadFile {
                 if (row != null) {
                     int numberOfCols = 0;
 
-                    System.out.println(numberOfRows);
-
                     for (Cell cell : row) {
 
                         String cellvalue = cell.toString();
@@ -200,8 +196,8 @@ class ReadFile {
             }
 
             if(!colFound){
-                throw new DataBaseException(new Exception());
-                //// TODO: 6/14/2016  Do something if data is not in the sheet
+                logger.error("Given company name not found");
+                throw new DataBaseException("Company name not found");
             }
 
             for (int numberOfRows = startRow; numberOfRows<sheet.getLastRowNum(); numberOfRows++) {
@@ -215,13 +211,11 @@ class ReadFile {
             }
 
             workBook.close();
-
-            System.out.println("READ coc done");
+            logger.info("COCOR read successful");
         } catch (IOException e) {
-            //// TODO: 6/14/2016
-            e.printStackTrace();
+            logger.error("Read coco or fail due to IO error ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Read coco or fail due to Database error ",e);
         }
 
 
@@ -240,13 +234,11 @@ class ReadFile {
 
                 row = sheet.getRow(numOfRows);
                 if(row == null){
-                    System.out.println("NULL row found");
                     break;
                 }
                 String statement = row.getCell(FileReadConstant.THEME_SHEET_STATEMENT_COLUMN).toString();
                 String theme = row.getCell(FileReadConstant.THEME_SHEET_THEME_COLUMN).toString();
                 if(statement.equalsIgnoreCase("") || theme.equalsIgnoreCase("")){
-                    System.out.println("no themes " + sheet.getLastRowNum());
                     break;
                 }
                 database.insertIntoThemeTable(statement,theme);
@@ -254,11 +246,11 @@ class ReadFile {
             }
 
             workBook.close();
-
+            logger.info("Theme read successful");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Read theme or fail due to IO error ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Read theme or fail due to Database error ",e);
         }
     }
 
@@ -311,12 +303,11 @@ class ReadFile {
                 }
             }
             workBook.close();
-
+            logger.info("Demography read successful");
         } catch (IOException e) {
-            e.printStackTrace();
-            //todo handle or throw
+            logger.error("Read Demography or fail due to IO error ",e);
         } catch (DataBaseException e) {
-            e.printStackTrace();
+            logger.error("Read Demography or fail due to Database error ",e);
         }
     }
 
@@ -325,8 +316,7 @@ class ReadFile {
     }
 
     static void closeall(){
-        //todo remove this and do it correctly
-        database.closeConnection(); //for testing
+        database.closeConnection();
 
     }
 
