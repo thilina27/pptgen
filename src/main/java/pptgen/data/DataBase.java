@@ -1,3 +1,5 @@
+package pptgen.data;
+
 import java.io.File;
 import java.sql.*;
 
@@ -8,7 +10,7 @@ import java.sql.*;
  * This class store all data bse connections and table details.
  * This also handle the creation of table and insertion.
  * Keep all data read from excel file in tables and arrays and provide package local methods to the
- * DataStore to provide data to the other packages.
+ * pptgen.data.DataStore to provide data to the other packages.
  *
  */
 class DataBase {
@@ -25,7 +27,7 @@ class DataBase {
     /**
      * @author Thilina
      *
-     * Constructor for the DataBase class
+     * Constructor for the pptgen.data.DataBase class
      *
      * Create a connection to data base and tables withing the database
      *
@@ -335,7 +337,7 @@ class DataBase {
      void sortTable(){
         try {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
-            //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
+            //// TODO: 6/15/2016 do sorting and store values in the pptgen.data.DataBaseConstant.SORT_TABLE
             //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
