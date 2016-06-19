@@ -1,9 +1,18 @@
 package pptgen.pptwriter;
 
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xslf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import pptgen.data.DataStore;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -127,7 +136,7 @@ public class PptCreator {
 
     public void createDemography(int numberOfDemos, String demo[]){
 
-        XSLFSlide slide = slides.get(PptReadConstant.SURVEY_CONSTRUCT_SLIDE_NUMBER);
+        XSLFSlide slide = slides.get(PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER);
         List<XSLFShape> shapes = slide.getShapes();
 
         //insert demos
@@ -261,4 +270,110 @@ public class PptCreator {
             }
         }
     }
+
+    public void createDemographyCharts(int numberOfDemos, String demos[]){
+
+        int start = PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER +1;
+        ArrayList<String> factors;
+        for (int i = 0; i<numberOfDemos; i++){
+
+            factors = DataStore.getFactorNmean(demos[i]);
+            try {
+                this.createDemos(demos[i],factors,start+i);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+    
+    private void createDemos(String demo, ArrayList<String> factors, int slideNo) throws IOException {
+
+        XSLFSlide slide = slides.get(slideNo);
+
+        List<XSLFShape> shapes = slide.getShapes();
+
+        for (XSLFShape shape: shapes) {
+            if (shape instanceof XSLFTextShape) {
+                String name = shape.getShapeName();
+                XSLFTextShape textShape = (XSLFTextShape)shape;
+                if(name.contains(PptReadConstant.TITLE)){
+                    textShape.setText(demo.toUpperCase());
+                    break;
+                }
+            }
+        }
+        //slide.getPlaceholders().
+        // find chart in the slide
+        XSLFChart chart = null;
+        for(POIXMLDocumentPart part : slide.getRelations()){
+            if(part instanceof XSLFChart){
+                chart = (XSLFChart) part;
+                break;
+            }
+        }
+
+        if(chart == null) throw new IllegalStateException("chart not found in the template");
+
+        // embedded Excel workbook that holds the chart data
+        POIXMLDocumentPart xlsPart = chart.getRelations().get(0);
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+
+        CTChart ctChart = chart.getCTChart();
+        CTPlotArea plotArea = ctChart.getPlotArea();
+
+        CTBarChart barChartArray = plotArea.getBarChartArray(0);
+        CTBarSer serArray = barChartArray.getSerArray(0);
+        CTSerTx tx = serArray.getTx();
+        /** Series Text **/
+        tx.getStrRef().getStrCache().getPtArray(0).setV(demo);
+        sheet.createRow(0).createCell(1).setCellValue(demo);
+        String titleRef = new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString();
+        tx.getStrRef().setF(titleRef);
+        // Category Axis Data
+        CTAxDataSource cat = serArray.getCat();
+        CTStrData strData = cat.getStrRef().getStrCache();
+        // Values
+        CTNumDataSource val = serArray.getVal();
+        CTNumData numData = val.getNumRef().getNumCache();
+        strData.setPtArray(null);  // unset old axis text
+        numData.setPtArray(null);  // unset old values
+        // set model
+        int idx = 0;
+        int rownum = 1;
+        int i = 0;
+
+        while (i < factors.size()) {
+
+            CTNumVal numVal = numData.addNewPt();
+            numVal.setIdx(idx);
+            numVal.setV(factors.get(i + 1));
+            CTStrVal sVal = strData.addNewPt();
+            sVal.setIdx(idx);
+            sVal.setV(factors.get(i));
+            idx++;
+            XSSFRow row = sheet.createRow(rownum++);
+            row.createCell(0).setCellValue(factors.get(i));
+            System.out.println(factors.get(i) + factors.get(i + 1));
+            row.createCell(1).setCellValue(Double.valueOf(factors.get(i + 1)));
+            i += 2;
+        }
+        numData.getPtCount().setVal(idx);
+        strData.getPtCount().setVal(idx);
+        String numDataRange = new CellRangeAddress(1, rownum - 1, 1, 1).formatAsString(sheet.getSheetName(), true);
+        val.getNumRef().setF(numDataRange);
+        String axisDataRange = new CellRangeAddress(1, rownum - 1, 0, 0).formatAsString(sheet.getSheetName(), true);
+        cat.getStrRef().setF(axisDataRange);
+        // updated the embedded workbook with the data
+        OutputStream xlsOut = xlsPart.getPackagePart().getOutputStream();
+        try {
+            wb.write(xlsOut);
+        } finally {
+            xlsOut.close();
+            wb.close();
+        }
+    }
 }
+

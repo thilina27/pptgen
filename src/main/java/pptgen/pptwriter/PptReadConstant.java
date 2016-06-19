@@ -9,7 +9,8 @@ class PptReadConstant {
     static final int COVER_SLIDE_NUMBER = 0;
     static final int CONTEXT_SLIDE_NUMBER = 2;
     static final int OBJECTIVES_SLIDE_NUMBER = 3;
-    static final int SURVEY_CONSTRUCT_SLIDE_NUMBER = 11;
+    static final int SURVEY_CONSTRUCT_SLIDE_NUMBER = 17;
+    static final int DEMOGRAPHY_SLIDE_NUMBER = 11;
     static int AOI_AND_AOS = 0;
     static int KEY_DRIVES = 0;
 
@@ -33,6 +34,7 @@ class PptReadConstant {
 
     //Shape const
     static final String TEXT_BOX = "TextBox";
+    static final String TITLE = "Title";
 
     //setters for change
     static void setAoiAndAOS(int slideNumber){

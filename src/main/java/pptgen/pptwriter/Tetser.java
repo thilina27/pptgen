@@ -23,19 +23,24 @@ public class Tetser {
 
             pptx = new XMLSlideShow(new FileInputStream("ppts//New Presentation format with tags.pptx"));
             slides = pptx.getSlides();
-            XSLFSlide slide = slides.get(40);
+            XSLFSlide slide = slides.get(18);
 
             List<XSLFShape> sh = slide.getShapes();
 
-            for (XSLFShape aSh : sh) {
-                if (aSh instanceof XSLFTable){
-                    XSLFTable tb = (XSLFTable)aSh;
-                    tb.getCell(1,0).setText("one");
-                    break;
+            for (XSLFShape shape: sh) {
+                if (shape instanceof XSLFTextShape) {
+                    String name = shape.getShapeName();
+                   // System.out.println(name);
+                    XSLFTextShape textShape = (XSLFTextShape)shape;
+                    String t = textShape.getText();
+                    //System.out.println(t);
+                    if(name.contains(PptReadConstant.TITLE)){
+                        System.out.println(t);
+                      t =t.replace("<Demo_1>","fdfdffds");
+                        textShape.setText(t);
+                        break;
+                    }
                 }
-                String name = aSh.getShapeName();
-                System.out.println(name);
-
             }
 
 
