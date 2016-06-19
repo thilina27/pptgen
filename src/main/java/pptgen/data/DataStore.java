@@ -13,11 +13,43 @@ import java.util.ArrayList;
 @SuppressWarnings("Duplicates")
 public class DataStore {
 
-    private static DataBase dataBase;
-    private static int numberOfDemograpy = 0;
 
-    public static void InitDataStore(DataBase dataBase){
-        dataBase = dataBase;
+    private static DataBase dataBase;
+    private static int numberOfDemography = 0;
+
+    public static void initReader(){
+        ReadFile.init();
+    }
+
+    public static void readStatementData(String fileName, String companyName, String sheet){
+        ReadFile.readStatements(fileName,companyName,sheet);
+    }
+
+    public static void readCOCORData(String fileName,String sheet){
+        ReadFile.readCOCOR(fileName,sheet);
+    }
+
+    public static void readThemeData(String fileName,String sheet){
+        ReadFile.readThemes(fileName,sheet);
+    }
+
+    public static void readDemoFactorsData(String fileName,String sheet){
+        ReadFile.readDemoFactors(fileName,sheet);
+    }
+
+    public static void analizeData(){
+        ReadFile.createSortData();
+        Analyzer.start();
+        ReadFile.closeall();
+        initDataStore(ReadFile.getDataBase());
+    }
+
+    public static void closeAllConnections(){
+        ReadFile.closeall();
+    }
+
+    private static void initDataStore(DataBase dataBaseOut){
+        dataBase = dataBaseOut;
     }
 
     /**
@@ -153,8 +185,8 @@ public class DataStore {
      * */
     public static int getNumberOfDemography(){
 
-        if(numberOfDemograpy !=0 ){
-            return numberOfDemograpy;
+        if(numberOfDemography !=0 ){
+            return numberOfDemography;
         }
 
         String quarry = "SELECT COUNT( DISTINCT "+DataBaseConstant.DEMOGRAPHY_COLUMN+") as C FROM "
@@ -162,12 +194,12 @@ public class DataStore {
 
         try {
             ResultSet rs = dataBase.runQuarry(quarry);
-            numberOfDemograpy = rs.getInt("C");
+            numberOfDemography = rs.getInt("C");
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return numberOfDemograpy;
+        return numberOfDemography;
     }
 
     /**

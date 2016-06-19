@@ -490,7 +490,7 @@ class DataBase {
         try {
 
             con.close();
-           //this.deleteDataBase();
+            this.deleteDataBase();
             closed = true;
         } catch (SQLException e) {
             //todo handle
