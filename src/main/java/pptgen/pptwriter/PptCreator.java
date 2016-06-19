@@ -11,6 +11,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 import pptgen.data.DataStore;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class PptCreator {
         }
     }
 
-    public void surveyConstruct(int numberOfStatements, int numberofStatements, int numberOfEmployees,
+    public void surveyConstruct(int numberOfStatements, int numberOfEmployees,
                                 int numberOfRespondents, String mode, String languages, String benchmark){
 
         XSLFSlide slide = slides.get(PptReadConstant.SURVEY_CONSTRUCT_SLIDE_NUMBER);
@@ -374,6 +375,18 @@ public class PptCreator {
             xlsOut.close();
             wb.close();
         }
+    }
+
+    public void savePPT(String fileName){
+
+        try {
+            OutputStream out = new FileOutputStream(fileName);
+            pptx.write(out);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
 

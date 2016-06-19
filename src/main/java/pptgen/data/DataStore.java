@@ -52,6 +52,9 @@ public class DataStore {
         dataBase = dataBaseOut;
     }
 
+    public static int getNumberOfSattements(){
+        return ReadFile.getNumberOfSattements();
+    }
     /**
      * Return number of respondents
      * */
