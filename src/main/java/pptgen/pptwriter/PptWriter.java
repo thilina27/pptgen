@@ -21,7 +21,7 @@ public class PptWriter {
         }
     }
 
-    public static void genarateStartingSlides(String companyName){
+    public static void generateStartingSlides(String companyName){
 
         pptx.createCover(companyName);
         pptx.createContext(companyName);
@@ -29,7 +29,7 @@ public class PptWriter {
 
     }
 
-    public static void genarateSurveyConstructSlide (int numberOfEmployees,String mode, String languages,
+    public static void generateSurveyConstructSlide(int numberOfEmployees, String mode, String languages,
                                                     String benchmark){
 
         int numberOfStatements = DataStore.getNumberOfSattements();
@@ -38,7 +38,7 @@ public class PptWriter {
 
     }
 
-    public static void genarateDemographySildes(){
+    public static void generateDemographySildes(){
 
         int numberOfDemos = DataStore.getNumberOfDemography();
         String demo[] = DataStore.getAllDemography();
@@ -48,7 +48,7 @@ public class PptWriter {
 
     }
 
-    public static void genarateAOINAOSList(){
+    public static void generateAOINAOSList(){
 
         ArrayList<String> aos = DataStore.getAOSThemes();
         ArrayList<String> aoi = DataStore.getAOIThemes();

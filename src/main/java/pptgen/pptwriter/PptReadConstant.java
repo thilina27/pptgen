@@ -9,14 +9,14 @@ class PptReadConstant {
     static final int COVER_SLIDE_NUMBER = 0;
     static final int CONTEXT_SLIDE_NUMBER = 2;
     static final int OBJECTIVES_SLIDE_NUMBER = 3;
-    static final int SURVEY_CONSTRUCT_SLIDE_NUMBER = 17;
-    static final int DEMOGRAPHY_SLIDE_NUMBER = 11;
-    static int AOI_AND_AOS = 0;
+    static final int SURVEY_CONSTRUCT_SLIDE_NUMBER = 11;
+    static final int DEMOGRAPHY_SLIDE_NUMBER = 17;
+    static int AOI_AND_AOS = 28;
     static int KEY_DRIVES = 0;
 
     //slide gap from aos n aoi to AOI and AOS separate
-    static final int AOS_DIFF = 5;
-    static final int AOI_DIFF = 10;
+    static final int AOS_SLIDE = 29;
+    static final int AOI_SLIDE= 35;
 
     //Slide text indicators
     static final String COMPANY_NAME_TOKEN = "<COMPANY_NAME>";
@@ -38,11 +38,11 @@ class PptReadConstant {
 
     //setters for change
     static void setAoiAndAOS(int slideNumber){
-        AOI_AND_AOS = slideNumber;
+        //AOI_AND_AOS = slideNumber;
     }
 
     static void setKeyDrives(int slideNumber){
-        KEY_DRIVES = slideNumber;
+        //KEY_DRIVES = slideNumber;
     }
 
 }

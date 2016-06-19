@@ -43,7 +43,7 @@ class PptCreator {
             if (shape instanceof XSLFTextShape) {
                 XSLFTextShape textShape = (XSLFTextShape)shape;
                 String slideText = textShape.getText();
-                if(slideText.contains(PptReadConstant.COMPANY_NAME_TOKEN)){
+                if(slideText.equalsIgnoreCase(PptReadConstant.COMPANY_NAME_TOKEN)){
                     textShape.setText(companyName.toUpperCase());
                     break;
                 }
@@ -105,13 +105,16 @@ class PptCreator {
 
                     XSLFTextShape textShape = (XSLFTextShape)aShape;
                     String text = textShape.getText();
-
                     if(text.contains(PptReadConstant.NUM_OF_STATEMENTS_TOKEN)){
                         String num = Integer.toString(numberOfStatements);
                         text = text.replace(PptReadConstant.NUM_OF_STATEMENTS_TOKEN,num);
+                        System.out.println(text);
+
                     }
                     else if(text.contains(PptReadConstant.BENCHMARK_TOKEN)){
                         text = text.replace(PptReadConstant.BENCHMARK_TOKEN,benchmark);
+                        System.out.println(text);
+
                     }
                     else if(text.contains(PptReadConstant.NUMBER_OF_EMPLOYEE_TOKEN)){
                         String val = Integer.toString(numberOfRespondents);
@@ -121,12 +124,18 @@ class PptCreator {
                         int temp =numberOfEmployees - numberOfRespondents;
                         val = Integer.toString(temp);
                         text = text.replace(PptReadConstant.NUMBER_OF_NON_RESPONDENT_TOKEN,val);
+                        System.out.println(text);
+
                     }
                     else if(text.contains(PptReadConstant.MODE_TOKEN)){
                         text = text.replace(PptReadConstant.MODE_TOKEN,mode);
+                        System.out.println(text);
+
                     }
                     else if(text.contains(PptReadConstant.LANGUAGES_TOKEN)){
                         text = text.replace(PptReadConstant.LANGUAGES_TOKEN,languages);
+                        System.out.println(text);
+
                     }
                     textShape.setText(text);
                 }
@@ -215,6 +224,7 @@ class PptCreator {
                 if (aSh instanceof XSLFTextShape) {
                     XSLFTextShape textShape = (XSLFTextShape)aSh;
                     String text = textShape.getText();
+                    System.out.println(text);
                     if(text.contains(PptReadConstant.STRENGTH_TOKEN)){
                         text = text.replace(PptReadConstant.STRENGTH_TOKEN,aos.get(i++));
                         textShape.setText(text);
@@ -227,8 +237,8 @@ class PptCreator {
             }
         }
 
-        this.createAO(aos,PptReadConstant.STRENGTH_TOKEN,PptReadConstant.AOI_AND_AOS+PptReadConstant.AOS_DIFF);
-        this.createAO(aoi,PptReadConstant.IMPROVEMENT_TOKEN,PptReadConstant.AOI_AND_AOS+PptReadConstant.AOI_DIFF);
+        this.createAO(aos,PptReadConstant.STRENGTH_TOKEN,PptReadConstant.AOS_SLIDE);
+        this.createAO(aoi,PptReadConstant.IMPROVEMENT_TOKEN,PptReadConstant.AOI_SLIDE);
     }
 
     private void createAO(ArrayList<String> ao, String token, int slideNum){
@@ -242,7 +252,7 @@ class PptCreator {
                 if (aShape instanceof XSLFTextShape) {
                     XSLFTextShape textShape = (XSLFTextShape) aShape;
                     String text = textShape.getText();
-
+                    System.out.println(text);
                     if(text.contains(token)){
                         text = text.replace(token,ao.get(i++));
                     }
@@ -277,7 +287,8 @@ class PptCreator {
 
         int start = PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER +1;
         ArrayList<String> factors;
-        for (int i = 0; i<numberOfDemos; i++){
+        int i ;
+        for (i = 0; i<numberOfDemos && i<9; i++){
 
             factors = DataStore.getFactorNmean(demos[i]);
             try {
@@ -286,6 +297,10 @@ class PptCreator {
                 e.printStackTrace();
             }
 
+        }
+
+        for (int j=i;j<9;j++){
+            slides.remove(j);
         }
 
     }
@@ -358,7 +373,6 @@ class PptCreator {
             idx++;
             XSSFRow row = sheet.createRow(rownum++);
             row.createCell(0).setCellValue(factors.get(i));
-            System.out.println(factors.get(i) + factors.get(i + 1));
             row.createCell(1).setCellValue(Double.valueOf(factors.get(i + 1)));
             i += 2;
         }

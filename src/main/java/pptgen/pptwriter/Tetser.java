@@ -23,22 +23,50 @@ public class Tetser {
 
             pptx = new XMLSlideShow(new FileInputStream("ppts//New Presentation format with tags.pptx"));
             slides = pptx.getSlides();
-            XSLFSlide slide = slides.get(18);
+            XSLFSlide slide = slides.get(11);
 
             List<XSLFShape> sh = slide.getShapes();
 
-            for (XSLFShape shape: sh) {
-                if (shape instanceof XSLFTextShape) {
-                    String name = shape.getShapeName();
-                   // System.out.println(name);
-                    XSLFTextShape textShape = (XSLFTextShape)shape;
-                    String t = textShape.getText();
-                    //System.out.println(t);
-                    if(name.contains(PptReadConstant.TITLE)){
-                        System.out.println(t);
-                      t =t.replace("<Demo_1>","fdfdffds");
-                        textShape.setText(t);
-                        break;
+            for (XSLFShape aShape : sh) {
+                String name = aShape.getShapeName();
+                if(name != null && name.contains(PptReadConstant.TEXT_BOX)){
+                    if (aShape instanceof XSLFTextShape) {
+
+                        XSLFTextShape textShape = (XSLFTextShape)aShape;
+                        String text = textShape.getText();
+                        if(text.contains(PptReadConstant.NUM_OF_STATEMENTS_TOKEN)){
+                            String num = Integer.toString(80);
+                            text = text.replace(PptReadConstant.NUM_OF_STATEMENTS_TOKEN,num);
+                            System.out.println(text);
+
+                        }
+                        else if(text.contains(PptReadConstant.BENCHMARK_TOKEN)){
+                            text = text.replace(PptReadConstant.BENCHMARK_TOKEN,"ksjkajskajska");
+                            System.out.println(text);
+
+                        }
+                        else if(text.contains(PptReadConstant.NUMBER_OF_EMPLOYEE_TOKEN)){
+                            String val = Integer.toString(1000);
+                            text = text.replace(PptReadConstant.NUMBER_OF_RESPONDENT_TOKEN,val);
+                            val = Integer.toString(80);
+                            text = text.replace(PptReadConstant.NUMBER_OF_EMPLOYEE_TOKEN,val);
+                            int temp =20;
+                            val = Integer.toString(temp);
+                            text = text.replace(PptReadConstant.NUMBER_OF_NON_RESPONDENT_TOKEN,val);
+                            System.out.println(text);
+
+                        }
+                        else if(text.contains(PptReadConstant.MODE_TOKEN)){
+                            text = text.replace(PptReadConstant.MODE_TOKEN,"kdkjsd");
+                            System.out.println(text);
+
+                        }
+                        else if(text.contains(PptReadConstant.LANGUAGES_TOKEN)){
+                            text = text.replace(PptReadConstant.LANGUAGES_TOKEN,"jadhjkasdha");
+                            System.out.println(text);
+
+                        }
+                        textShape.setText(text);
                     }
                 }
             }

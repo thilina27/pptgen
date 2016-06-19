@@ -37,10 +37,9 @@ public class DataStore {
         ReadFile.readDemoFactors(fileName,sheet);
     }
 
-    public static void analizeData(){
+    public static void analyzeData(){
         ReadFile.createSortData();
         Analyzer.start();
-        ReadFile.closeall();
         initDataStore(ReadFile.getDataBase());
     }
 
