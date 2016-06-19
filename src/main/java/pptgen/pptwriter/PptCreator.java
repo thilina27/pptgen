@@ -288,7 +288,7 @@ class PptCreator {
         int start = PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER +1;
         ArrayList<String> factors;
         int i ;
-        for (i = 0; i<numberOfDemos && i<9; i++){
+        for (i = 0; i<numberOfDemos && i<10; i++){
 
             factors = DataStore.getFactorNmean(demos[i]);
             try {
@@ -299,7 +299,7 @@ class PptCreator {
 
         }
 
-        for (int j=i;j<9;j++){
+        for (int j=i;j<10;j++){
             slides.remove(j);
         }
 

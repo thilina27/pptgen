@@ -2,10 +2,7 @@ package pptgen.pptwriter;
 
 import org.apache.poi.xslf.usermodel.*;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Calendar;
 import java.util.List;
 
@@ -16,7 +13,11 @@ public class Tetser {
 
     public static void main(String arg[]){
 
-        XMLSlideShow pptx = null;
+
+
+
+
+        /**XMLSlideShow pptx = null;
         List<XSLFSlide> slides;
 
         try {
@@ -81,6 +82,6 @@ public class Tetser {
             e.printStackTrace();
         }
 
-
+**/
     }
 }
