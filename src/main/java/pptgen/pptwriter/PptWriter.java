@@ -1,6 +1,9 @@
 package pptgen.pptwriter;
 
+import pptgen.data.DataStore;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Thilina on 6/19/2016.
@@ -18,12 +21,39 @@ public class PptWriter {
         }
     }
 
-    public static void genarateSlides(String companyName){
+    public static void genarateStartingSlides(String companyName){
 
         pptx.createCover(companyName);
         pptx.createContext(companyName);
         pptx.createObjectives(companyName);
 
+    }
+
+    public static void genarateSurveyConstructSlide (int numberOfEmployees,String mode, String languages,
+                                                    String benchmark){
+
+        int numberOfStatements = DataStore.getNumberOfSattements();
+        int numberOfRespondents = DataStore.getNumberOfRespondents();
+        pptx.surveyConstruct(numberOfStatements,numberOfEmployees,numberOfRespondents,mode,languages,benchmark);
+
+    }
+
+    public static void genarateDemographySildes(){
+
+        int numberOfDemos = DataStore.getNumberOfDemography();
+        String demo[] = DataStore.getAllDemography();
+
+        pptx.createDemography(numberOfDemos,demo);
+        pptx.createDemographyCharts(numberOfDemos,demo);
+
+    }
+
+    public static void genarateAOINAOSList(){
+
+        ArrayList<String> aos = DataStore.getAOSThemes();
+        ArrayList<String> aoi = DataStore.getAOIThemes();
+
+        pptx.createAOINAOSList(aoi,aos);
     }
 
     public static void savePPTX(String fileName){

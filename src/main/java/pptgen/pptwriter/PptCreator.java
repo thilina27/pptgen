@@ -21,19 +21,19 @@ import java.util.List;
 /**
  * Created by Thilina on 6/18/2016.
  */
-public class PptCreator {
+class PptCreator {
 
     private XMLSlideShow pptx;
     private List<XSLFSlide> slides;
 
-    public PptCreator(String fileName) throws IOException {
+    PptCreator(String fileName) throws IOException {
 
         pptx = new XMLSlideShow(new FileInputStream(fileName));
         slides = pptx.getSlides();
 
     }
 
-    public void createCover(String companyName){
+    void createCover(String companyName){
 
         XSLFSlide slide = slides.get(PptReadConstant.COVER_SLIDE_NUMBER);
 
@@ -51,7 +51,7 @@ public class PptCreator {
         }
     }
 
-    public void createContext(String companyName){
+    void createContext(String companyName){
 
         XSLFSlide slide = slides.get(PptReadConstant.CONTEXT_SLIDE_NUMBER);
         int year = Calendar.getInstance().get(Calendar.YEAR);
@@ -71,7 +71,7 @@ public class PptCreator {
         }
     }
 
-    public void createObjectives(String companyName){
+    void createObjectives(String companyName){
 
         XSLFSlide slide = slides.get(PptReadConstant.OBJECTIVES_SLIDE_NUMBER);
         List<XSLFShape> shapes = slide.getShapes();
@@ -92,8 +92,8 @@ public class PptCreator {
         }
     }
 
-    public void surveyConstruct(int numberOfStatements, int numberOfEmployees,
-                                int numberOfRespondents, String mode, String languages, String benchmark){
+    void surveyConstruct(int numberOfStatements, int numberOfEmployees,
+                         int numberOfRespondents, String mode, String languages, String benchmark){
 
         XSLFSlide slide = slides.get(PptReadConstant.SURVEY_CONSTRUCT_SLIDE_NUMBER);
         List<XSLFShape> shapes = slide.getShapes();
@@ -135,9 +135,10 @@ public class PptCreator {
     }
 
 
-    public void createDemography(int numberOfDemos, String demo[]){
+    void createDemography(int numberOfDemos, String demo[]){
 
         XSLFSlide slide = slides.get(PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER);
+        PptReadConstant.setAoiAndAOS(PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER + numberOfDemos +1);
         List<XSLFShape> shapes = slide.getShapes();
 
         //insert demos
@@ -198,7 +199,7 @@ public class PptCreator {
         }
     }
 
-    public void createAOINAOSList(ArrayList<String> aoi,ArrayList<String> aos){
+    void createAOINAOSList(ArrayList<String> aoi, ArrayList<String> aos){
 
         if (PptReadConstant.AOI_AND_AOS == 0){
             //// TODO: 6/18/2016 handle this
@@ -272,7 +273,7 @@ public class PptCreator {
         }
     }
 
-    public void createDemographyCharts(int numberOfDemos, String demos[]){
+    void createDemographyCharts(int numberOfDemos, String demos[]){
 
         int start = PptReadConstant.DEMOGRAPHY_SLIDE_NUMBER +1;
         ArrayList<String> factors;
@@ -377,7 +378,7 @@ public class PptCreator {
         }
     }
 
-    public void savePPT(String fileName){
+    void savePPT(String fileName){
 
         try {
             OutputStream out = new FileOutputStream(fileName);
