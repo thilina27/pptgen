@@ -25,7 +25,7 @@ public class TestDrive {
         PptWriter.generateAOINAOSList();
 
         //last
-        PptWriter.generateDemographySildes();
+        PptWriter.generateDemographySlides();
 
 
         PptWriter.savePPTX("ppts\\testout1.pptx");

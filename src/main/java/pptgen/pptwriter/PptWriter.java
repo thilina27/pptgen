@@ -42,7 +42,7 @@ public class PptWriter {
 
     }
 
-    public static void generateDemographySildes(){
+    public static void generateDemographySlides(){
 
         int numberOfDemos = DataStore.getNumberOfDemography();
         String demo[] = DataStore.getAllDemography();
@@ -86,7 +86,7 @@ public class PptWriter {
             br.close();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace(); //// TODO: 6/19/2016  
+            e.printStackTrace(); //// TODO: 6/19/2016
         } catch (IOException e) {
             e.printStackTrace();
         }
